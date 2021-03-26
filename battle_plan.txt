@@ -1,0 +1,8 @@
+On va essayer d'aller vite.
+
+1.0 installer une machine virtuelle debian sur le goinfre partagé.
+1: classifier les differentes fonctions donnees par le sujet
+2: inspecter les parametres -h et -v du man unix / debian
+3: etablir le comportement attendu du programme.
+4: tester chaque fonction systeme autorisee et observer comment elles se comportent en vrai
+5: etablir l'architecture du code
