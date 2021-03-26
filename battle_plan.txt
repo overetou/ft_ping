@@ -2,7 +2,47 @@ On va essayer d'aller vite.
 
 1.0 installer une machine virtuelle debian sur le goinfre partagé.
 1: classifier les differentes fonctions donnees par le sujet
+
+A On a le droit a une variable globale. Pourquoi ?
+B getpid nous donne l'identifiant (PID ou process id) du process actuel. Il est communement utilise pour generer des fichiers temporaires
+uniques.
+C getuid renvoie l'identifiant de l'utilisateur reel du process.
+D getaddr retourne une addrinfo a partir d'un hote internet et d'un service. Cette structure contient
+flags
+family
+socktype
+protocole
+addrname
+addr
+canonname
+next
+E gettimeofday renvoie le compte de temps actuel, en seconde et en microsecondes. Ce sera utile pour mesurer les temps
+de reponse.
+F inet_ntop convertie une addresse ip du format binaire au format texte.
+G inet_pton fait exactement l'inverse de inet_ntop
+H signal semble etre utilise pour faire generer des signaux au programme (ex segfault)
+I Alarme permet de programmer dans le temps l'emission de signaux charges au prealable.
+J setsockopt allows you to set the options of a socket.
+K recvmsg recevoir un message d'un socket.
+L sendto envoie un message sur un socket.
+M socket cree un endpoint de communication.
+
+1.2 Qu'est-ce qu'un(e) socket ?
+Un socket permet la communication entre deux process, sur une meme machine ou deux machine differentes.
+1.2.2 Qu'est-ce qu'un endpoint de communication ?
+
+Une addresse ip est un moyen d'identifier un hote connecte a internet. (IP = Internet Protocol). Elle se stock sur 32 bits.
+Subnetting: Il est courant d'avoir recours a des sous reseaux. Par exemple lorsqu'il y a plusieurs machines qui partagent une meme connection?
+Chaque hote aura alors une addresse propre au sein de ce sous reseau.
+DNS = Domain Name System
+
+Pour creer un socket: utiliser socket(). On conversera dessus avec sendto et recvmsg
+
 2: inspecter les parametres -h et -v du man unix / debian
 3: etablir le comportement attendu du programme.
 4: tester chaque fonction systeme autorisee et observer comment elles se comportent en vrai
 5: etablir l'architecture du code
+
+Codage:
+1. On va utiliser une approche modulaire pour pouvoir aisement ajouter des choses.
+On aura donc un master.
