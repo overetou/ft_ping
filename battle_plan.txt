@@ -7,7 +7,7 @@ A On a le droit a une variable globale. Pourquoi ?
 B getpid nous donne l'identifiant (PID ou process id) du process actuel. Il est communement utilise pour generer des fichiers temporaires
 uniques.
 C getuid renvoie l'identifiant de l'utilisateur reel du process.
-D getaddr retourne une addrinfo a partir d'un hote internet et d'un service. Cette structure contient
+D getaddrinfo retourne une addrinfo a partir d'un hote internet et d'un service. Cette structure contient
 flags
 family
 socktype
@@ -41,7 +41,7 @@ Pour creer un socket: utiliser socket(). On conversera dessus avec sendto et rec
 ping utilise le protocol ICMP mandataire ECHO_REQUEST datagram pour obtenir une
 reponse sous la forme ICMP ECHO_RESPONSE
 
-2: inspecter les parametres -h et -v du man unix / debian
+OK 2: inspecter les parametres -h et -v du man unix / debian
 3: etablir le comportement attendu du programme.
 4: tester chaque fonction systeme autorisee et observer comment elles se comportent en vrai
 5: etablir l'architecture du code
@@ -49,7 +49,17 @@ reponse sous la forme ICMP ECHO_RESPONSE
 Codage:
 1. On va utiliser une approche modulaire pour pouvoir aisement ajouter des choses.
 On aura donc un master.
+2.Essayer de creer un socket.
+3. Essayer de se connecter a un serveur via ce socket.
 
 Checklist:
--tester les differentes valeurs possibles de IPV version et verifier que les bon parametres sont correctement definis.
--Voir si il faut pouvoir ping plusieurs destinations en un appel. Apparement c'est ok.
+OK -tester les differentes valeurs possibles de IPV version et verifier que les bon parametres sont correctement definis.
+OK -Voir si il faut pouvoir ping plusieurs destinations en un appel. Apparement c'est ok.
+-Si necessaire, on pourra utiliser SOCK_NONBLOCK.
+
+Renseignements supplementaires necessaires:
+Que fait ping exactement ?
+Parcourir la documentation autour des sockets:
+Qu'est-ce qu'un datagram?
+Comment se deroule une transaction autour d'un socket en utilisant un datagram ?
+Est-ce ce qu'il nous faut?

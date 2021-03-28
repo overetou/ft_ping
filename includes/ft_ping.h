@@ -9,8 +9,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdbool.h>
-
-enum e_ipv_version {IPV4, IPV6, DEFAULT};
+#include <sys/types.h>
+#include <sys/socket.h>
 
 typedef struct  s_master
 {
@@ -19,7 +19,7 @@ typedef struct  s_master
 	unsigned int        received;
 	long unsigned int   time;   //In ms.
 
-	enum e_ipv_version  ipv_version;
+	int                 domain;
 	bool                verbose;
 }               t_master;
 
@@ -29,6 +29,13 @@ typedef struct  s_arg_processing
 	char    **argv;
 	int     pos;
 }               t_arg_processing;
+
+typedef struct  s_networking
+{
+	int type;
+	int protocol;
+	int socket_fd;
+}               t_networking;
 
 bool ft_strcmp(char *s1, char *s2);
 
