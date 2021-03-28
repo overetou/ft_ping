@@ -20,8 +20,8 @@ void print_conclusion(t_master *m)
 {
 	printf("--- %s ping statistics ---\n"
 	       "%u packets transmitted, %u received, %.1f%% packet loss, time "
-		"%lums\n", m->target_domain_name, m->transmitted, m->received, 0.0,
-		m->time);
+		"%lums\n", m->destination, m->transmitted, m->received, 0.0,
+	       m->time);
 }
 
 void setup_master(t_master *m)
@@ -29,14 +29,5 @@ void setup_master(t_master *m)
 	m->transmitted = 0;
 	m->received = 0;
 	m->time = 0;
-}
-
-void process_arguments(int argc, char **argv, t_master *m)
-{
-	if (argc != 2) {
-		puts("Usage: ft_ping [-vh] destination\n"
-	   "Usage: ft_ping -6 [-vh] destination");
-		exit(0);
-	}
-	m->target_domain_name = argv[1];
+	m->ipv_version = DEFAULT;
 }

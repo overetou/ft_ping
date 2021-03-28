@@ -5,4 +5,4 @@ set(CMAKE_C_STANDARD 99)
 
 include_directories(includes)
 
-add_executable(ft_ping src/main.c includes/ft_ping.h)
+add_executable(ft_ping src/main.c includes/ft_ping.h src/arguments_processing.c src/str_manip.c)
