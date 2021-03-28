@@ -6,12 +6,15 @@ void setup_master(t_master *m);
 
 void print_conclusion(t_master *m);
 
+void establish_connection(t_master *m);
+
 int main(int argc, char **argv)
 {
 	t_master m;
 
 	process_arguments(argc, argv, &m);
 	setup_master(&m);
+	establish_connection(&m);
 	print_conclusion(&m);
 	return 0;
 }
