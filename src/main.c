@@ -29,4 +29,5 @@ void setup_master(t_master *m)
 	m->transmitted = 0;
 	m->received = 0;
 	m->time = 0;
+	m->verbose = false;
 }

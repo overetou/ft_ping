@@ -20,6 +20,7 @@ typedef struct  s_master
 	long unsigned int   time;   //In ms.
 
 	enum e_ipv_version  ipv_version;
+	bool                verbose;
 }               t_master;
 
 typedef struct  s_arg_processing

@@ -52,3 +52,4 @@ On aura donc un master.
 
 Checklist:
 -tester les differentes valeurs possibles de IPV version et verifier que les bon parametres sont correctement definis.
+-Voir si il faut pouvoir ping plusieurs destinations en un appel. Apparement c'est ok.
