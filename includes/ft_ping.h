@@ -11,9 +11,10 @@
 
 typedef struct  s_master
 {
-	const char *target_domain_name;
-	unsigned int    transmitted;
-	unsigned int    received;
+	const char          *target_domain_name;
+	unsigned int        transmitted;
+	unsigned int        received;
+	long unsigned int   time;   //In ms.
 }               t_master;
 
 #endif //FT_PING

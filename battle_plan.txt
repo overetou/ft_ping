@@ -38,6 +38,9 @@ DNS = Domain Name System
 
 Pour creer un socket: utiliser socket(). On conversera dessus avec sendto et recvmsg
 
+ping utilise le protocol ICMP mandataire ECHO_REQUEST datagram pour obtenir une
+reponse sous la forme ICMP ECHO_RESPONSE
+
 2: inspecter les parametres -h et -v du man unix / debian
 3: etablir le comportement attendu du programme.
 4: tester chaque fonction systeme autorisee et observer comment elles se comportent en vrai
