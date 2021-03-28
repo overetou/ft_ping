@@ -49,3 +49,6 @@ reponse sous la forme ICMP ECHO_RESPONSE
 Codage:
 1. On va utiliser une approche modulaire pour pouvoir aisement ajouter des choses.
 On aura donc un master.
+
+Checklist:
+-tester les differentes valeurs possibles de IPV version et verifier que les bon parametres sont correctement definis.

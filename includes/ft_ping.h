@@ -24,7 +24,9 @@ typedef struct  s_master
 
 typedef struct  s_arg_processing
 {
-	unsigned short  pos;
+	int     argc;
+	char    **argv;
+	int     pos;
 }               t_arg_processing;
 
 bool ft_strcmp(char *s1, char *s2);

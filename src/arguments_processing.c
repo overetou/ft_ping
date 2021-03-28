@@ -4,23 +4,29 @@
 
 #include "ft_ping.h"
 
-void setup_arg_processing(t_arg_processing *ap);
+void setup_arg_processing(int argc, char **argv,
+                          t_arg_processing *ap);
 
-void check_explicit_ipv_version(int argc, char **argv, t_arg_processing *ap,
-                                t_master *p_master);
+void check_explicit_ipv_version(t_arg_processing *ap, t_master *m);
 
 void display_usage();
+
+void check_coherent_pos(t_arg_processing *ap);
 
 void process_arguments(int argc, char **argv, t_master *m)
 {
 	t_arg_processing ap;
 
-	if (argc != 2) {
+	setup_arg_processing(argc, argv, &ap);
+	check_explicit_ipv_version(&ap, m);
+	check_coherent_pos(&ap);
+	m->destination = argv[ap.pos];
+}
+
+void check_coherent_pos(t_arg_processing *ap)
+{
+	if (ap->pos == ap->argc)
 		display_usage();
-	}
-	setup_arg_processing(&ap);
-	check_explicit_ipv_version(argc, argv, &ap, m);
-	m->destination = argv[1];
 }
 
 void display_usage()
@@ -30,19 +36,31 @@ void display_usage()
 	exit(0);
 }
 
-void check_explicit_ipv_version(int argc, char **argv, t_arg_processing *ap,
-                                t_master *m)
+void check_explicit_ipv_version(t_arg_processing *ap, t_master *m)
 {
-	if (ft_strcmp(argv[ap->pos], "-4"))
+	check_coherent_pos(ap);
+	if (ft_strcmp(ap->argv[ap->pos], "-4"))
+	{
+		puts("Working with IPv4.");
 		m->ipv_version = IPV4;
-	else if (ft_strcmp(argv[ap->pos], "-6"))
+	}
+	else if (ft_strcmp(ap->argv[ap->pos], "-6"))
+	{
+		puts("Working with IPv6.");
 		m->ipv_version = IPV6;
+	}
 	else
+	{
+		puts("Working with default IPv.");
+		m->ipv_version = DEFAULT;
 		return;
-	ap->pos++;
+	}
+	(ap->pos)++;
 }
 
-void setup_arg_processing(t_arg_processing *ap)
+void setup_arg_processing(int argc, char **argv, t_arg_processing *ap)
 {
+	ap->argc = argc;
+	ap->argv = argv;
 	ap->pos = 1;
 }
