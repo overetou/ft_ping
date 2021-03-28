@@ -32,20 +32,8 @@ void setup_master(t_master *m)
 void process_arguments(int argc, char **argv, t_master *m)
 {
 	if (argc != 2) {
-		fputs("usage: ft_ping [-AaDdfnoQqRrv] [-c count] [-G sweepmaxsize]\n"
-		      "               [-g sweepminsize] [-h sweepincrsize] [-i wait]\n"
-		      "               [-l preload] [-M mask | time] [-m ttl] [-p "
-		      "pattern]\n"
-		      "               [-S src_addr] [-s packetsize] [-t timeout][-W "
-		      "waittime]\n"
-		      "               [-z tos] host\n"
-		      "       ft_ping [-AaDdfLnoQqRrv] [-c count] [-I iface] [-i "
-		      "wait]\n"
-		      "               [-l preload] [-M mask | time] [-m ttl] [-p "
-		      "pattern] [-S src_addr]\n"
-		      "               [-s packetsize] [-T ttl] [-t timeout] [-W "
-		      "waittime]\n"
-		      "               [-z tos] mcast-group\n", stderr);
+		puts("Usage: ft_ping [-vh] destination\n"
+	   "Usage: ft_ping -6 [-vh] destination");
 		exit(0);
 	}
 	m->target_domain_name = argv[1];
