@@ -28,3 +28,14 @@ void	ft_strcpy(const char *src, char *dest)
 		i++;
 	}
 }
+
+void	ft_strncpy(const char *src, char *dest, int len)
+{
+	int i = 0;
+
+	while (i != len)
+	{
+		dest[i] = src[i];
+		i++;
+	}
+}
