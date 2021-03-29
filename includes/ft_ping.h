@@ -11,6 +11,12 @@
 #include <stdbool.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <arpa/inet.h>
+
+#define PACKET_SIZE 64
+#define PORT_NO 0
+#define PING_SLEEP_RATE 1000000 x
+#define TIMEOUT_IN_SEC 1
 
 typedef struct  s_master
 {
@@ -23,19 +29,20 @@ typedef struct  s_master
 	bool                verbose;
 }               t_master;
 
+typedef struct  s_networking
+{
+	bool    ping_loop;
+	int     type;
+	int     protocol;
+	int     socket_fd;
+}               t_networking;
+
 typedef struct  s_arg_processing
 {
 	int     argc;
 	char    **argv;
 	int     pos;
 }               t_arg_processing;
-
-typedef struct  s_networking
-{
-	int type;
-	int protocol;
-	int socket_fd;
-}               t_networking;
 
 bool ft_strcmp(char *s1, char *s2);
 

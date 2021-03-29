@@ -56,6 +56,7 @@ Checklist:
 OK -tester les differentes valeurs possibles de IPV version et verifier que les bon parametres sont correctement definis.
 OK -Voir si il faut pouvoir ping plusieurs destinations en un appel. Apparement c'est ok.
 -Si necessaire, on pourra utiliser SOCK_NONBLOCK.
+-Il faudra intercepter ctrl-C pour l'affichage final. Les fonctions donnees le permettent-elles?
 
 Renseignements supplementaires necessaires:
 Que fait ping exactement ?
