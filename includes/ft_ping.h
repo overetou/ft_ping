@@ -12,8 +12,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#include <icmp.h>
-
+#include <netinet/ip_icmp.h>
 #define PACKET_SIZE 64
 #define PORT_NO 0
 #define PING_SLEEP_RATE 1000000 x
@@ -36,6 +35,7 @@ typedef struct  s_networking
 	int     type;
 	int     protocol;
 	int     socket_fd;
+	
 	struct icmphdr hdr;
 	char msg[PACKET_SIZE - sizeof(struct icmphdr)];
 }               t_networking;
