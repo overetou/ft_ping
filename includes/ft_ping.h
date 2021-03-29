@@ -12,7 +12,6 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#include <netinet/ip_icmp.h>
 #define PACKET_SIZE 64
 #define PORT_NO 0
 #define PING_SLEEP_RATE 1000000 x
@@ -29,6 +28,13 @@ typedef struct  s_master
 	bool                verbose;
 }               t_master;
 
+typedef struct	s_icmp_request_data
+{
+	char type;
+	char code;
+	
+}				t_icmp_request_data;
+
 typedef struct  s_networking
 {
 	bool    ping_loop;
@@ -36,8 +42,7 @@ typedef struct  s_networking
 	int     protocol;
 	int     socket_fd;
 	
-	struct icmphdr hdr;
-	char msg[PACKET_SIZE - sizeof(struct icmphdr)];
+	t_icmp_request_data	data;
 }               t_networking;
 
 typedef struct  s_arg_processing
@@ -48,5 +53,6 @@ typedef struct  s_arg_processing
 }               t_arg_processing;
 
 bool ft_strcmp(char *s1, char *s2);
+void	ft_strcpy(const char *src, char *dest);
 
 #endif //FT_PING

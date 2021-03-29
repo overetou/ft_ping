@@ -17,3 +17,14 @@ bool ft_strcmp(char *s1, char *s2)
 	}
 	return true;
 }
+
+void	ft_strcpy(const char *src, char *dest)
+{
+	unsigned int i = 0;
+
+	while (src[i])
+	{
+		dest[i] = src[i];
+		i++;
+	}
+}

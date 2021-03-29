@@ -31,6 +31,12 @@ unsigned short checksum(void *b, int len)
 	return result;
 }
 
+void	set_icmp_request(t_icmp_request_data *data)
+{
+	data->type = 8;
+	data->code = 0;
+}
+
 //TODO: change the size if need be for ipv6. l17
 //TODO: if the protocol is ipv6, change the Type of the message. l19
 // accordingly(https://en.wikipedia.org/wiki/Ping_(networking_utility)#ICMP_packet)
@@ -44,6 +50,7 @@ void establish_connection(t_master *m)
 
 	n.socket_fd = socket(m->domain, SOCK_DGRAM, 0);
 	critical_check(n.socket_fd != -1, "Unable to create a socket.");
-	//sendto(n.socket_fd, )
-	inet_pton(AF_INET, "google.com", destination_bin);
+	critical_check(inet_pton(AF_INET, "127.0.0.1", destination_bin) == 1, "Failed to convert localhost to binary address.");
+	set_icmp_request(&(n.data));
+	sendto(n.socket_fd, &(n.data), PACKET_SIZE, 0, destination_bin, sizeof(struct in_addr));
 }
