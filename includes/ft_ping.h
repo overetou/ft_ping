@@ -12,6 +12,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <icmp.h>
 
 #define PACKET_SIZE 64
 #define PORT_NO 0
@@ -35,6 +36,8 @@ typedef struct  s_networking
 	int     type;
 	int     protocol;
 	int     socket_fd;
+	struct icmphdr hdr;
+	char msg[PACKET_SIZE - sizeof(struct icmphdr)];
 }               t_networking;
 
 typedef struct  s_arg_processing

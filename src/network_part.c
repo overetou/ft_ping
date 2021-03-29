@@ -21,10 +21,6 @@ void establish_connection(t_master *m)
 	t_networking n;
 	n.ping_loop = true;
 	char destination_bin[sizeof(struct in_addr)];
-	char         echo_request[] = {
-			8, 0, 0, 0,
-			3, 232,
-	};
 
 	n.socket_fd = socket(m->domain, SOCK_DGRAM, 0);
 	critical_check(n.socket_fd != -1, "Unable to create a socket.");
