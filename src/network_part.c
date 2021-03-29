@@ -11,6 +11,26 @@ void critical_check(bool val, const char *msg)
 	exit(0);
 }
 
+unsigned short checksum(void *b, int len)
+{
+	unsigned short *buf = b;
+	unsigned int sum = 0;
+	unsigned short result;
+
+	while (len > 1)
+	{
+		sum += *buf;
+		buf++;
+		len -= 2;
+	}
+	if (len == 1)
+		sum += *(unsigned char*)buf;
+	sum = (sum >> 16) + (sum & 0xFFFF);
+	sum += (sum >> 16);
+	result = ~sum;
+	return result;
+}
+
 //TODO: change the size if need be for ipv6. l17
 //TODO: if the protocol is ipv6, change the Type of the message. l19
 // accordingly(https://en.wikipedia.org/wiki/Ping_(networking_utility)#ICMP_packet)
