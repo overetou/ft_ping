@@ -12,6 +12,7 @@ void critical_check(bool val, const char *msg)
 		return;
 	fprintf(stderr, "System report: \"%s\".\n", strerror(errno));
 	fputs(msg, stderr);
+	fputc('\n', stderr);
 	exit(0);
 }
 
@@ -43,7 +44,7 @@ uint16_t	ip_checksum(void *vdata, size_t len)
 
 	for (size_t i = 0; i + 1 < len; i += 2)
 	{
-		ft_strncpy(casted + i, &word, 2);
+		ft_strncpy(casted + i, (char*)(&word), 2);
 		accumulator += ntohs(word);
 		if (accumulator > 0xffff)
 			accumulator -= 0xffff;
@@ -51,7 +52,7 @@ uint16_t	ip_checksum(void *vdata, size_t len)
 	if (len & 1)
 	{
 		word = 0;
-		ft_strncpy(casted + len - 1, &word, 1);
+		ft_strncpy(casted + len - 1, (char*)(&word), 1);
 		accumulator += ntohs(word);
 		if (accumulator > 0xffff)
 			accumulator -= 0xffff;
@@ -86,15 +87,15 @@ void establish_connection(t_master *m)
 {
 	t_networking n;
 	n.ping_loop = true;
-	int				hdrincl = 0;
 
 	n.sd = socket(m->domain, SOCK_RAW, IPPROTO_ICMP);
 	critical_check(
 		n.sd != -1,
 		"Unable to create a socket.");
 	
+	int				hdrincl = 0;
 	critical_check(
-		setsockopt(n.sd, IPPROTO_IP, IP_HDRINCL, &hdrincl, sizeof(hdrincl)),
+		setsockopt(n.sd, IPPROTO_IP, IP_HDRINCL, &hdrincl, sizeof(hdrincl)) != -1,
 		"setsockopt failure.");
 
 	const size_t	req_size = 8;
@@ -105,6 +106,20 @@ void establish_connection(t_master *m)
 	req.un.echo.id = htons(rand());
 	req.un.echo.sequence = htons(1);
 	req.checksum = ip_checksum(&req, req_size);
+
+	struct addrinfo	*res;
+	struct addrinfo hints;
+	hints.ai_addr = NULL;
+	hints.ai_addrlen = 0;
+	hints.ai_canonname = NULL;
+	hints.ai_family = PF_UNSPEC;
+	hints.ai_flags = 0 | AI_CANONNAME;
+	hints.ai_next = NULL;
+	hints.ai_protocol = 0;
+	hints.ai_socktype = SOCK_STREAM;
+	critical_check(
+		getaddrinfo("google.com", NULL, &hints, &res) == 0,
+		"getaddrinfo failed.");
 
 	//critical_check(inet_pton(AF_INET, "127.0.0.1", &(n.a_in.sin_addr)) == 1, "Failed to convert localhost to binary address.");
 

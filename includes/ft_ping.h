@@ -5,6 +5,8 @@
 #ifndef FT_PING
 #define FT_PING
 
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -12,8 +14,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#include <netinet/in.h>
 #include <netinet/ip_icmp.h>
+#include <netdb.h>
 #define PACKET_SIZE 64
 #define PORT_NO 0
 #define PING_SLEEP_RATE 1000000 x
