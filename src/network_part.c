@@ -10,8 +10,8 @@ void critical_check(bool val, const char *msg)
 {
 	if (val)
 		return;
-	printf("System report: \"%s\".\n", strerror(errno));
-	puts(msg);
+	fprintf(stderr, "System report: \"%s\".\n", strerror(errno));
+	fputs(msg, stderr);
 	exit(0);
 }
 
@@ -33,6 +33,30 @@ unsigned short checksum(void *b, int len)
 	sum += (sum >> 16);
 	result = ~sum;
 	return result;
+}
+
+uint16_t	ip_checksum(void *vdata, size_t len)
+{
+	char	*casted = (char*)vdata;
+	uint32_t	accumulator = 0xffff;
+	uint16_t	word;
+
+	for (size_t i = 0; i + 1 < len; i += 2)
+	{
+		ft_strncpy(casted + i, &word, 2);
+		accumulator += ntohs(word);
+		if (accumulator > 0xffff)
+			accumulator -= 0xffff;
+	}
+	if (len & 1)
+	{
+		word = 0;
+		ft_strncpy(casted + len - 1, &word, 1);
+		accumulator += ntohs(word);
+		if (accumulator > 0xffff)
+			accumulator -= 0xffff;
+	}
+	return htons(~accumulator);
 }
 
 void	set_icmp_request(t_icmp_request_data *data)
@@ -62,17 +86,30 @@ void establish_connection(t_master *m)
 {
 	t_networking n;
 	n.ping_loop = true;
+	int				hdrincl = 0;
 
 	n.sd = socket(m->domain, SOCK_RAW, IPPROTO_ICMP);
-	critical_check(n.sd != -1, "Unable to create a socket.");
+	critical_check(
+		n.sd != -1,
+		"Unable to create a socket.");
 	
-	setsockopt(n.sd, SOL_SOCKET, IP_HDRINCL, 1, 1);
+	critical_check(
+		setsockopt(n.sd, IPPROTO_IP, IP_HDRINCL, &hdrincl, sizeof(hdrincl)),
+		"setsockopt failure.");
 
-	critical_check(inet_pton(AF_INET, "127.0.0.1", &(n.a_in.sin_addr)) == 1, "Failed to convert localhost to binary address.");
-	set_icmp_request(&(n.data));
+	const size_t	req_size = 8;
+	struct icmphdr	req;
+	req.type = 8;
+	req.code = 0;
+	req.checksum = 0;
+	req.un.echo.id = htons(rand());
+	req.un.echo.sequence = htons(1);
+	req.checksum = ip_checksum(&req, req_size);
+
+	//critical_check(inet_pton(AF_INET, "127.0.0.1", &(n.a_in.sin_addr)) == 1, "Failed to convert localhost to binary address.");
 
 	critical_check(
-		sendto(n.sd, &(n.data), 64 + 48, 0, (struct sockaddr*)(&(n.a_in)), sizeof(struct in_addr)) != -1,
+		sendto(n.sd, &req, req_size, 0, res->ai_addr, res->ai_addrlen) != -1,
 		"sendto() failed.");
 
 	close(n.sd);
