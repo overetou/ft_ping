@@ -3,10 +3,14 @@
 //
 #include "ft_ping.h"
 
+#include <string.h>//TODO: Remove this line
+#include <errno.h>//TODO: Remove this line
+
 void critical_check(bool val, const char *msg)
 {
 	if (val)
 		return;
+	printf("System report: \"%s\".\n", strerror(errno));
 	puts(msg);
 	exit(0);
 }
@@ -38,10 +42,10 @@ void	set_icmp_request(t_icmp_request_data *data)
 	data->chcksum = 0;
 	data->identifier = 0;
 	data->seq_number = 0;
-	ft_strncpy(data, data->data, 64);
+	ft_strncpy((char*)data, data->data, 64);
 	ft_strncpy("aswdertiopvbdfrtuiomnvfreuiopocvderdjkfkjufhgyui", (data->data) + 64, 48);
 	data->chcksum = checksum(data->data, 64 + 48);
-	ft_strncpy(data, data->data, 64);
+	ft_strncpy((char*)data, data->data, 64);
 }
 
 void	set_sock_addr_in(struct sockaddr_in *a_in)
@@ -59,11 +63,17 @@ void establish_connection(t_master *m)
 	t_networking n;
 	n.ping_loop = true;
 
-	n.sd = socket(m->domain, SOCK_DGRAM, 0);
+	n.sd = socket(m->domain, SOCK_RAW, IPPROTO_ICMP);
 	critical_check(n.sd != -1, "Unable to create a socket.");
-	setsockopt(n.sd, SOL_SOCKET, );
+	
+	setsockopt(n.sd, SOL_SOCKET, IP_HDRINCL, 1, 1);
+
 	critical_check(inet_pton(AF_INET, "127.0.0.1", &(n.a_in.sin_addr)) == 1, "Failed to convert localhost to binary address.");
 	set_icmp_request(&(n.data));
-	sendto(n.sd, &(n.data), PACKET_SIZE, 0, &(n.a_in), sizeof(struct in_addr));
+
+	critical_check(
+		sendto(n.sd, &(n.data), 64 + 48, 0, (struct sockaddr*)(&(n.a_in)), sizeof(struct in_addr)) != -1,
+		"sendto() failed.");
+
 	close(n.sd);
 }
