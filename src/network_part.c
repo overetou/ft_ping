@@ -78,6 +78,36 @@ void	set_sock_addr_in(struct sockaddr_in *a_in)
 	a_in->sin_family = AF_INET;
 }
 
+void	open_socket(t_networking *n, t_master *m)
+{
+	n->sd = socket(m->domain, SOCK_RAW, IPPROTO_ICMP);
+	critical_check(
+		n->sd != -1,
+		"Unable to create a socket."
+	);
+}
+
+void	set_socket_options(t_networking *n, t_master *m)
+{
+	int				hdrincl = 0;
+	critical_check(
+		setsockopt(n->sd, IPPROTO_IP, IP_HDRINCL, &hdrincl, sizeof(hdrincl)) != -1,
+		"setsockopt failure."
+	);
+}
+
+//TODO see what htons do (and remove / replace it).
+
+void	create_echo_request(t_networking *n, t_master *m)
+{
+	n->req.type = 8;
+	n->req.code = 0;
+	n->req.checksum = 0;
+	n->req.un.echo.id = htons(rand());
+	n->req.un.echo.sequence = htons(1);
+	n->req.checksum = ip_checksum(&(n->req), REQ_SIZE);
+}
+
 //TODO: change the size if need be for ipv6. l17
 //TODO: if the protocol is ipv6, change the Type of the message. l19
 // accordingly(https://en.wikipedia.org/wiki/Ping_(networking_utility)#ICMP_packet)
@@ -86,26 +116,11 @@ void	set_sock_addr_in(struct sockaddr_in *a_in)
 void establish_connection(t_master *m)
 {
 	t_networking n;
+
 	n.ping_loop = true;
-
-	n.sd = socket(m->domain, SOCK_RAW, IPPROTO_ICMP);
-	critical_check(
-		n.sd != -1,
-		"Unable to create a socket.");
-	
-	int				hdrincl = 0;
-	critical_check(
-		setsockopt(n.sd, IPPROTO_IP, IP_HDRINCL, &hdrincl, sizeof(hdrincl)) != -1,
-		"setsockopt failure.");
-
-	const size_t	req_size = 8;
-	struct icmphdr	req;
-	req.type = 8;
-	req.code = 0;
-	req.checksum = 0;
-	req.un.echo.id = htons(rand());
-	req.un.echo.sequence = htons(1);
-	req.checksum = ip_checksum(&req, req_size);
+	open_socket(&n, m);
+	set_socket_options(&n, m);
+	create_echo_request(&n, m);
 
 	struct addrinfo	*res;
 	struct addrinfo hints;
@@ -124,7 +139,7 @@ void establish_connection(t_master *m)
 	//critical_check(inet_pton(AF_INET, "127.0.0.1", &(n.a_in.sin_addr)) == 1, "Failed to convert localhost to binary address.");
 
 	critical_check(
-		sendto(n.sd, &req, req_size, 0, res->ai_addr, res->ai_addrlen) != -1,
+		sendto(n.sd, &(n.req), REQ_SIZE, 0, res->ai_addr, res->ai_addrlen) != -1,
 		"sendto() failed.");
 
 	close(n.sd);

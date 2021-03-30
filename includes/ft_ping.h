@@ -20,6 +20,7 @@
 #define PORT_NO 0
 #define PING_SLEEP_RATE 1000000 x
 #define TIMEOUT_IN_SEC 1
+#define REQ_SIZE 8
 
 typedef struct  s_master
 {
@@ -32,22 +33,11 @@ typedef struct  s_master
 	bool                verbose;
 }               t_master;
 
-typedef struct	s_icmp_request_data
-{
-	uint8_t		type;
-	uint8_t		code;
-	uint16_t	chcksum;
-	uint16_t	identifier;
-	uint16_t	seq_number;
-	char		data[64 + 48];
-}				t_icmp_request_data;
-
 typedef struct  s_networking
 {
 	bool    			ping_loop;
 	int					sd;
-	struct sockaddr_in	a_in;
-	t_icmp_request_data	data;
+	struct icmphdr		req;
 }               t_networking;
 
 typedef struct  s_arg_processing
