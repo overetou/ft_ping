@@ -20,12 +20,15 @@ E gettimeofday renvoie le compte de temps actuel, en seconde et en microsecondes
 de reponse.
 F inet_ntop convertie une addresse ip du format binaire au format texte.
 G inet_pton fait exactement l'inverse de inet_ntop
-H signal semble etre utilise pour faire generer des signaux au programme (ex segfault)
+H signal semble etre utilise pour faire generer des signaux au programme (ex segfault). Sera peut etre utilise pour intercepter ctrl-C.
 I Alarme permet de programmer dans le temps l'emission de signaux charges au prealable.
 J setsockopt allows you to set the options of a socket.
 K recvmsg recevoir un message d'un socket.
 L sendto envoie un message sur un socket.
 M socket cree un endpoint de communication.
+
+The sockaddr_storage structure is useful in programs that must handle socket addresses in a generic way (e.g., programs that must deal with both IPv4
+and IPv6 socket addresses).
 
 1.2 Qu'est-ce qu'un(e) socket ?
 Un socket permet la communication entre deux process, sur une meme machine ou deux machine differentes.

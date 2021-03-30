@@ -47,7 +47,6 @@ void	set_icmp_request(t_icmp_request_data *data)
 void	set_sock_addr_in(struct sockaddr_in *a_in)
 {
 	a_in->sin_family = AF_INET;
-	a_in->sin_port = htons(3490);
 }
 
 //TODO: change the size if need be for ipv6. l17
@@ -62,6 +61,7 @@ void establish_connection(t_master *m)
 
 	n.sd = socket(m->domain, SOCK_DGRAM, 0);
 	critical_check(n.sd != -1, "Unable to create a socket.");
+	setsockopt(n.sd, SOL_SOCKET, );
 	critical_check(inet_pton(AF_INET, "127.0.0.1", &(n.a_in.sin_addr)) == 1, "Failed to convert localhost to binary address.");
 	set_icmp_request(&(n.data));
 	sendto(n.sd, &(n.data), PACKET_SIZE, 0, &(n.a_in), sizeof(struct in_addr));
