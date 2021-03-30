@@ -60,19 +60,6 @@ uint16_t	ip_checksum(void *vdata, size_t len)
 	return htons(~accumulator);
 }
 
-void	set_icmp_request(t_icmp_request_data *data)
-{
-	data->type = 8;
-	data->code = 0;
-	data->chcksum = 0;
-	data->identifier = 0;
-	data->seq_number = 0;
-	ft_strncpy((char*)data, data->data, 64);
-	ft_strncpy("aswdertiopvbdfrtuiomnvfreuiopocvderdjkfkjufhgyui", (data->data) + 64, 48);
-	data->chcksum = checksum(data->data, 64 + 48);
-	ft_strncpy((char*)data, data->data, 64);
-}
-
 void	set_sock_addr_in(struct sockaddr_in *a_in)
 {
 	a_in->sin_family = AF_INET;
@@ -108,6 +95,21 @@ void	create_echo_request(t_networking *n, t_master *m)
 	n->req.checksum = ip_checksum(&(n->req), REQ_SIZE);
 }
 
+void	convert_text_addr_to_struct(t_networking *n, t_master *m)
+{
+	n->hints.ai_addr = NULL;
+	n->hints.ai_addrlen = 0;
+	n->hints.ai_canonname = NULL;
+	n->hints.ai_family = PF_UNSPEC;
+	n->hints.ai_flags = 0 | AI_CANONNAME;
+	n->hints.ai_next = NULL;
+	n->hints.ai_protocol = 0;
+	n->hints.ai_socktype = SOCK_STREAM;
+	critical_check(
+		getaddrinfo("google.com", NULL, &(n->hints), &(n->res)) == 0,
+		"getaddrinfo failed.");
+}
+
 //TODO: change the size if need be for ipv6. l17
 //TODO: if the protocol is ipv6, change the Type of the message. l19
 // accordingly(https://en.wikipedia.org/wiki/Ping_(networking_utility)#ICMP_packet)
@@ -121,26 +123,9 @@ void establish_connection(t_master *m)
 	open_socket(&n, m);
 	set_socket_options(&n, m);
 	create_echo_request(&n, m);
-
-	struct addrinfo	*res;
-	struct addrinfo hints;
-	hints.ai_addr = NULL;
-	hints.ai_addrlen = 0;
-	hints.ai_canonname = NULL;
-	hints.ai_family = PF_UNSPEC;
-	hints.ai_flags = 0 | AI_CANONNAME;
-	hints.ai_next = NULL;
-	hints.ai_protocol = 0;
-	hints.ai_socktype = SOCK_STREAM;
+	convert_text_addr_to_struct(&n, m);
 	critical_check(
-		getaddrinfo("google.com", NULL, &hints, &res) == 0,
-		"getaddrinfo failed.");
-
-	//critical_check(inet_pton(AF_INET, "127.0.0.1", &(n.a_in.sin_addr)) == 1, "Failed to convert localhost to binary address.");
-
-	critical_check(
-		sendto(n.sd, &(n.req), REQ_SIZE, 0, res->ai_addr, res->ai_addrlen) != -1,
+		sendto(n.sd, &(n.req), REQ_SIZE, 0, n.res->ai_addr, n.res->ai_addrlen) != -1,
 		"sendto() failed.");
-
 	close(n.sd);
 }

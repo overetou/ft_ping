@@ -35,9 +35,11 @@ typedef struct  s_master
 
 typedef struct  s_networking
 {
-	bool    			ping_loop;
-	int					sd;
-	struct icmphdr		req;
+	bool    		ping_loop;
+	int				sd;
+	struct icmphdr	req;
+	struct addrinfo	*res;
+	struct addrinfo	hints;
 }               t_networking;
 
 typedef struct  s_arg_processing
