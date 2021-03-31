@@ -67,3 +67,17 @@ Parcourir la documentation autour des sockets:
 Qu'est-ce qu'un datagram?
 Comment se deroule une transaction autour d'un socket en utilisant un datagram ?
 Est-ce ce qu'il nous faut?
+
+Bon ca y est on a un ping relativement fiable.
+Prochains objectifs:
+-faire boucler le ping avec un delai (voir si le delai peut etre defini dans la commande d'origine)
+-mettre a jour les valeurs globales (min, mean, ...)
+-regarder le type de resultat que renvoie ntop. Ca correspond a la ref net de google dans l'output?
+-Regarder la verbose et essayer de l'ajouter.
+-regarder ce que sont les seq, ttl, ect...
+-Compter les paquets (envoyes, recus)
+-Voir quand exactement commence et s'arrete le timer global.
+-verifier si il y a une indentation particuliere dans les formats d'output.
+-Ajouter la compatibilite IPv6
+-Trouver des options interessantes a ajouter.
+-Voir si on peut coder une alternative a freeaddrinfo.

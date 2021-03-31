@@ -23,14 +23,17 @@ void print_conclusion(t_master *m)
 {
 	printf("--- %s ping statistics ---\n"
 	       "%u packets transmitted, %u received, %.1f%% packet loss, time "
-		"%lums\n", m->destination, m->transmitted, m->received, 0.0,
-	       m->time);
+		"%lums\nrtt min/mean/max/mdev = %ld/%ld/%ld/%d ms\n", m->destination, m->transmitted, m->received, 0.0,
+	       get_ms() - m->time, m->min, m->mean, m->max, 0);
 }
 
 void setup_master(t_master *m)
 {
 	m->transmitted = 0;
 	m->received = 0;
-	m->time = 0;
+	m->time = get_ms();
 	m->verbose = false;
+	m->min = 0;
+	m->mean = 0;
+	m->max = 0;
 }

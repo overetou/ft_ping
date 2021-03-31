@@ -141,13 +141,15 @@ void	get_reply(t_networking *n, t_master *m)
 	if (n->msg.msg_flags & MSG_TRUNC)
 		puts("Message was too big for buffer. It was truncated.");
 	struct sockaddr_in *addr = (struct sockaddr_in*)(n->res->ai_addr);
-	printf("%d bytes from %s (%s): icmp_seq=%d ttl=%d time=%.1f\n",
+	n->second_ms -= n->ms_save;
+	printf("%d bytes from %s (%s): icmp_seq=%d ttl=%d time=%ld.%ldms\n",
 	reveived_len,
 	"REPLACE_ME",
 	inet_ntoa((struct in_addr)(addr->sin_addr)),
 	0,
 	0,
-	0.0);
+	(n->second_ms) / 1000,
+	(n->second_ms - ((n->second_ms / 1000) * 1000)) / 10);
 }
 
 //TODO: change the size if need be for ipv6. l17
@@ -179,6 +181,6 @@ void ping_periodicaly(t_master *m)
 		"sendto() failed.");
 	n.ms_save = get_ms();
 	get_reply(&n, m);
-	printf("Ping took %ldms.\n", n.second_ms - n.ms_save);
+	freeaddrinfo(n.res);
 	close(n.sd);
 }

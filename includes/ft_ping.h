@@ -28,9 +28,12 @@ typedef struct  s_master
 	const char          *destination;
 	unsigned int        transmitted;
 	unsigned int        received;
-	long unsigned int   time;   //In ms.
+	suseconds_t		   time;   //In ms.
 
 	int                 domain;
+	suseconds_t			min;
+	suseconds_t			mean;
+	suseconds_t			max;
 	bool                verbose;
 }               t_master;
 
@@ -59,5 +62,6 @@ typedef struct  s_arg_processing
 bool ft_strcmp(char *s1, char *s2);
 void	ft_strcpy(const char *src, char *dest);
 void	ft_strncpy(const char *src, char *dest, int len);
+suseconds_t	get_ms(void);
 
 #endif //FT_PING

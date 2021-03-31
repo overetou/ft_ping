@@ -67,18 +67,11 @@ void check_explicit_ipv_version(t_arg_processing *ap, t_master *m)
 {
 	check_coherent_pos(ap);
 	if (ft_strcmp(ap->argv[ap->pos], "-4"))
-	{
-		puts("Working with IPv4.");
 		m->domain = AF_INET;
-	}
 	else if (ft_strcmp(ap->argv[ap->pos], "-6"))
-	{
-		puts("Working with IPv6.");
 		m->domain = AF_INET6;
-	}
 	else
 	{
-		puts("Working with default IPv.");
 		m->domain = AF_INET;
 		return;
 	}
