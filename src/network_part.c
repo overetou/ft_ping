@@ -110,12 +110,43 @@ void	convert_text_addr_to_struct(t_networking *n, t_master *m)
 		"getaddrinfo failed.");
 }
 
+void	get_reply(t_networking *n, t_master *m)
+{
+	char buffer[548];
+	struct sockaddr_storage src_addr;
+	struct iovec iov[1];
+	iov[0].iov_base = buffer;
+	iov[0].iov_len = sizeof(buffer);
+	struct msghdr msg;
+	msg.msg_name = &src_addr;
+	msg.msg_namelen = sizeof(src_addr);
+	msg.msg_iov = iov;
+	msg.msg_iovlen = 1;
+	msg.msg_control = 0;
+	msg.msg_controllen = 0;
+	int reveived_len = recvmsg(n->sd, &msg, 0);
+	printf("Received back a message of %d bytes.\n", reveived_len);
+	if (msg.msg_flags & MSG_TRUNC)
+		puts("Message was too big for buffer. It was truncated.");
+}
+
 //TODO: change the size if need be for ipv6. l17
 //TODO: if the protocol is ipv6, change the Type of the message. l19
 // accordingly(https://en.wikipedia.org/wiki/Ping_(networking_utility)#ICMP_packet)
 //TODO: Change AF_INET to AFINET6 when using ipv6. l29
 
-void establish_connection(t_master *m)
+suseconds_t	get_ms(void)
+{
+	struct timeval	tv;
+	struct timezone	tz;
+
+	critical_check(
+		gettimeofday(&tv, &tz) != -1,
+		"Could not get time of day.");
+	return tv.tv_usec;
+}
+
+void ping_periodicaly(t_master *m)
 {
 	t_networking n;
 
@@ -124,8 +155,11 @@ void establish_connection(t_master *m)
 	set_socket_options(&n, m);
 	create_echo_request(&n, m);
 	convert_text_addr_to_struct(&n, m);
+	n.ms_save = get_ms();
 	critical_check(
 		sendto(n.sd, &(n.req), REQ_SIZE, 0, n.res->ai_addr, n.res->ai_addrlen) != -1,
 		"sendto() failed.");
+	get_reply(&n, m);
+	printf("Ping took %llums.\n", get_ms() - n.ms_save);
 	close(n.sd);
 }

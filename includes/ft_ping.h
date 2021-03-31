@@ -16,6 +16,7 @@
 #include <arpa/inet.h>
 #include <netinet/ip_icmp.h>
 #include <netdb.h>
+#include <sys/time.h>
 #define PACKET_SIZE 64
 #define PORT_NO 0
 #define PING_SLEEP_RATE 1000000 x
@@ -40,6 +41,7 @@ typedef struct  s_networking
 	struct icmphdr	req;
 	struct addrinfo	*res;
 	struct addrinfo	hints;
+	suseconds_t		ms_save;
 }               t_networking;
 
 typedef struct  s_arg_processing
