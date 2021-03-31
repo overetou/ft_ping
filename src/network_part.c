@@ -125,9 +125,10 @@ void	get_reply(t_networking *n, t_master *m)
 	msg.msg_control = 0;
 	msg.msg_controllen = 0;
 	int reveived_len = recvmsg(n->sd, &msg, 0);
-	printf("Received back a message of %d bytes.\n", reveived_len);
+	critical_check(reveived_len != -1, "Could not receive message proprely.");
 	if (msg.msg_flags & MSG_TRUNC)
 		puts("Message was too big for buffer. It was truncated.");
+	printf("Received back a message of %d bytes.\n", reveived_len);
 }
 
 //TODO: change the size if need be for ipv6. l17
@@ -146,6 +147,14 @@ suseconds_t	get_ms(void)
 	return tv.tv_usec;
 }
 
+//TODO : replace call to inet_itoa to homemade func.
+
+void	print_introduction(t_networking *n)
+{
+	struct sockaddr_in *addr = (struct sockaddr_in*)(n->res->ai_addr);
+	printf("PING %s (%s) 56(84) bytes of data.\n", "google.com", inet_ntoa((struct in_addr)(addr->sin_addr)));
+}
+
 void ping_periodicaly(t_master *m)
 {
 	t_networking n;
@@ -155,11 +164,12 @@ void ping_periodicaly(t_master *m)
 	set_socket_options(&n, m);
 	create_echo_request(&n, m);
 	convert_text_addr_to_struct(&n, m);
+	print_introduction(&n);
 	n.ms_save = get_ms();
 	critical_check(
 		sendto(n.sd, &(n.req), REQ_SIZE, 0, n.res->ai_addr, n.res->ai_addrlen) != -1,
 		"sendto() failed.");
 	get_reply(&n, m);
-	printf("Ping took %llums.\n", get_ms() - n.ms_save);
+	printf("Ping took %lums.\n", get_ms() - n.ms_save);
 	close(n.sd);
 }
