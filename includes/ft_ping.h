@@ -42,6 +42,11 @@ typedef struct  s_networking
 	struct addrinfo	*res;
 	struct addrinfo	hints;
 	suseconds_t		ms_save;
+	suseconds_t		second_ms;
+	char 			buffer[548];
+	struct 			sockaddr_storage src_addr;
+	struct 			iovec iov[1];
+	struct			msghdr msg;
 }               t_networking;
 
 typedef struct  s_arg_processing

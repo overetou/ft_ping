@@ -110,32 +110,6 @@ void	convert_text_addr_to_struct(t_networking *n, t_master *m)
 		"getaddrinfo failed.");
 }
 
-void	get_reply(t_networking *n, t_master *m)
-{
-	char buffer[548];
-	struct sockaddr_storage src_addr;
-	struct iovec iov[1];
-	iov[0].iov_base = buffer;
-	iov[0].iov_len = sizeof(buffer);
-	struct msghdr msg;
-	msg.msg_name = &src_addr;
-	msg.msg_namelen = sizeof(src_addr);
-	msg.msg_iov = iov;
-	msg.msg_iovlen = 1;
-	msg.msg_control = 0;
-	msg.msg_controllen = 0;
-	int reveived_len = recvmsg(n->sd, &msg, 0);
-	critical_check(reveived_len != -1, "Could not receive message proprely.");
-	if (msg.msg_flags & MSG_TRUNC)
-		puts("Message was too big for buffer. It was truncated.");
-	printf("Received back a message of %d bytes.\n", reveived_len);
-}
-
-//TODO: change the size if need be for ipv6. l17
-//TODO: if the protocol is ipv6, change the Type of the message. l19
-// accordingly(https://en.wikipedia.org/wiki/Ping_(networking_utility)#ICMP_packet)
-//TODO: Change AF_INET to AFINET6 when using ipv6. l29
-
 suseconds_t	get_ms(void)
 {
 	struct timeval	tv;
@@ -146,6 +120,40 @@ suseconds_t	get_ms(void)
 		"Could not get time of day.");
 	return tv.tv_usec;
 }
+
+void	setup_msg_getter(t_networking *n)
+{
+	n->iov[0].iov_base = n->buffer;
+	n->iov[0].iov_len = sizeof(n->buffer);
+	n->msg.msg_name = &(n->src_addr);
+	n->msg.msg_namelen = sizeof(n->src_addr);
+	n->msg.msg_iov = n->iov;
+	n->msg.msg_iovlen = 1;
+	n->msg.msg_control = 0;
+	n->msg.msg_controllen = 0;
+}
+
+void	get_reply(t_networking *n, t_master *m)
+{
+	int reveived_len = recvmsg(n->sd, &(n->msg), 0);
+	n->second_ms = get_ms();
+	critical_check(reveived_len != -1, "Could not receive message proprely.");
+	if (n->msg.msg_flags & MSG_TRUNC)
+		puts("Message was too big for buffer. It was truncated.");
+	struct sockaddr_in *addr = (struct sockaddr_in*)(n->res->ai_addr);
+	printf("%d bytes from %s (%s): icmp_seq=%d ttl=%d time=%.1f\n",
+	reveived_len,
+	"REPLACE_ME",
+	inet_ntoa((struct in_addr)(addr->sin_addr)),
+	0,
+	0,
+	0.0);
+}
+
+//TODO: change the size if need be for ipv6. l17
+//TODO: if the protocol is ipv6, change the Type of the message. l19
+// accordingly(https://en.wikipedia.org/wiki/Ping_(networking_utility)#ICMP_packet)
+//TODO: Change AF_INET to AFINET6 when using ipv6. l29
 
 //TODO : replace call to inet_itoa to homemade func.
 
@@ -163,13 +171,14 @@ void ping_periodicaly(t_master *m)
 	open_socket(&n, m);
 	set_socket_options(&n, m);
 	create_echo_request(&n, m);
+	setup_msg_getter(&n);
 	convert_text_addr_to_struct(&n, m);
 	print_introduction(&n);
-	n.ms_save = get_ms();
 	critical_check(
 		sendto(n.sd, &(n.req), REQ_SIZE, 0, n.res->ai_addr, n.res->ai_addrlen) != -1,
 		"sendto() failed.");
+	n.ms_save = get_ms();
 	get_reply(&n, m);
-	printf("Ping took %lums.\n", get_ms() - n.ms_save);
+	printf("Ping took %ldms.\n", n.second_ms - n.ms_save);
 	close(n.sd);
 }
