@@ -70,8 +70,8 @@ Est-ce ce qu'il nous faut?
 
 Bon ca y est on a un ping relativement fiable.
 Prochains objectifs:
--faire boucler le ping avec un delai (voir si le delai peut etre defini dans la commande d'origine)
--mettre a jour les valeurs globales (min, mean, ...)
+OK-faire boucler le ping avec un delai (voir si le delai peut etre defini dans la commande d'origine)
+OK-mettre a jour les valeurs globales (min, mean, ...)
 -regarder le type de resultat que renvoie ntop. Ca correspond a la ref net de google dans l'output?
 -Regarder la verbose et essayer de l'ajouter.
 -regarder ce que sont les seq, ttl, ect...

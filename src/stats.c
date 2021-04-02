@@ -17,7 +17,7 @@ void    update_stats(t_networking *n, t_master *m)
         m->max = n->second_ms;
     }
     (m->nb_results)++;
-    m->results = realloc(m->results, m->nb_results);
+    m->results = realloc(m->results, m->nb_results * sizeof(suseconds_t));
     m->results[(m->nb_results) - 1] = n->second_ms;
 }
 
