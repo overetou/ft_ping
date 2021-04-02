@@ -3,19 +3,6 @@
 //
 #include "ft_ping.h"
 
-#include <string.h>//TODO: Remove this line
-#include <errno.h>//TODO: Remove this line
-
-void critical_check(bool val, const char *msg)
-{
-	if (val)
-		return;
-	fprintf(stderr, "System report: \"%s\".\n", strerror(errno));
-	fputs(msg, stderr);
-	fputc('\n', stderr);
-	exit(0);
-}
-
 unsigned short checksum(void *b, int len)
 {
 	unsigned short *buf = b;
@@ -110,17 +97,6 @@ void	convert_text_addr_to_struct(t_networking *n, t_master *m)
 		"getaddrinfo failed.");
 }
 
-suseconds_t	get_ms(void)
-{
-	struct timeval	tv;
-	struct timezone	tz;
-
-	critical_check(
-		gettimeofday(&tv, &tz) != -1,
-		"Could not get time of day.");
-	return tv.tv_usec;
-}
-
 void	setup_msg_getter(t_networking *n)
 {
 	n->iov[0].iov_base = n->buffer;
@@ -150,6 +126,7 @@ void	get_reply(t_networking *n, t_master *m)
 	0,
 	(n->second_ms) / 1000,
 	(n->second_ms - ((n->second_ms / 1000) * 1000)) / 10);
+	update_stats(n, m);
 }
 
 //TODO: change the size if need be for ipv6. l17
@@ -165,6 +142,15 @@ void	print_introduction(t_networking *n)
 	printf("PING %s (%s) 56(84) bytes of data.\n", "google.com", inet_ntoa((struct in_addr)(addr->sin_addr)));
 }
 
+void	ping(t_networking *n, t_master *m)
+{
+	critical_check(
+		sendto(n->sd, &(n->req), REQ_SIZE, 0, n->res->ai_addr, n->res->ai_addrlen) != -1,
+		"sendto() failed.");
+	n->ms_save = get_ms();
+	get_reply(n, m);
+}
+
 void ping_periodicaly(t_master *m)
 {
 	t_networking n;
@@ -176,11 +162,11 @@ void ping_periodicaly(t_master *m)
 	setup_msg_getter(&n);
 	convert_text_addr_to_struct(&n, m);
 	print_introduction(&n);
-	critical_check(
-		sendto(n.sd, &(n.req), REQ_SIZE, 0, n.res->ai_addr, n.res->ai_addrlen) != -1,
-		"sendto() failed.");
-	n.ms_save = get_ms();
-	get_reply(&n, m);
+	while (n.ping_loop == true && m->nb_results != 5)
+	{
+		ping(&n, m);
+		wait_one_sec();
+	}
 	freeaddrinfo(n.res);
 	close(n.sd);
 }

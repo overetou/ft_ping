@@ -34,6 +34,9 @@ typedef struct  s_master
 	suseconds_t			min;
 	suseconds_t			mean;
 	suseconds_t			max;
+	suseconds_t			mdev;
+	suseconds_t			*results;
+	unsigned int		nb_results;
 	bool                verbose;
 }               t_master;
 
@@ -59,9 +62,14 @@ typedef struct  s_arg_processing
 	int     pos;
 }               t_arg_processing;
 
-bool ft_strcmp(char *s1, char *s2);
-void	ft_strcpy(const char *src, char *dest);
-void	ft_strncpy(const char *src, char *dest, int len);
+bool 		ft_strcmp(char *s1, char *s2);
+void		ft_strcpy(const char *src, char *dest);
+void		ft_strncpy(const char *src, char *dest, int len);
 suseconds_t	get_ms(void);
+void		wait_one_sec(void);
+void 		critical_check(bool val, const char *msg);
+void		update_stats(t_networking *n, t_master *m);
+void    	calculate_mean(t_master *m);
+void   		calculate_mdev(t_master *m);
 
 #endif //FT_PING
