@@ -4,7 +4,7 @@
 
 void    update_stats(t_networking *n, t_master *m)
 {
-    if (m->nb_results)
+    if (m->transmitted)
     {
         if (n->second_ms < m->min)
             m->min = n->second_ms;
@@ -16,24 +16,32 @@ void    update_stats(t_networking *n, t_master *m)
         m->min = n->second_ms;
         m->max = n->second_ms;
     }
-    (m->nb_results)++;
-    m->results = realloc(m->results, m->nb_results * sizeof(suseconds_t));
-    m->results[(m->nb_results) - 1] = n->second_ms;
+    (m->transmitted)++;
+    m->results = realloc(m->results, m->transmitted * sizeof(suseconds_t));
+    m->results[(m->transmitted) - 1] = n->second_ms;
 }
 
 //TODO: Manually check that the results of mean and mdev are correct (from the real ping and ours)
+
+void    calculate_loss_percentage(t_master *m)
+{
+    if (m->received)
+        m->packet_loss = 100 - (100 / ((m->transmitted) / (m->received)));
+    else
+        m->packet_loss = 0;
+}
 
 void    calculate_mean(t_master *m)
 {
     suseconds_t     sum = 0;
     unsigned int    i = 0;
 
-    while (i != m->nb_results)
+    while (i != m->transmitted)
     {
         sum += m->results[i];
         i++;
     }
-    m->mean = sum / m->nb_results;
+    m->mean = sum / m->transmitted;
 }
 
 suseconds_t    square_root(suseconds_t val)
@@ -50,10 +58,10 @@ void    calculate_mdev(t_master *m)
     suseconds_t     squared_diff_sum = 0;
     unsigned int    i = 0;
 
-    while (i != m->nb_results)
+    while (i != m->transmitted)
     {
         squared_diff_sum += ((m->results[i]) - (m->mean)) * ((m->results[i]) - (m->mean));
         i++;
     }
-    m->mdev = square_root(squared_diff_sum / m->nb_results);
+    m->mdev = square_root(squared_diff_sum / m->transmitted);
 }

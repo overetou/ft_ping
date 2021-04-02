@@ -113,6 +113,7 @@ void	get_reply(t_networking *n, t_master *m)
 {
 	int reveived_len = recvmsg(n->sd, &(n->msg), 0);
 	n->second_ms = get_ms();
+	(m->received)++;
 	critical_check(reveived_len != -1, "Could not receive message proprely.");
 	if (n->msg.msg_flags & MSG_TRUNC)
 		puts("Message was too big for buffer. It was truncated.");
@@ -162,7 +163,7 @@ void ping_periodicaly(t_master *m)
 	setup_msg_getter(&n);
 	convert_text_addr_to_struct(&n, m);
 	print_introduction(&n);
-	while (n.ping_loop == true && m->nb_results != 5)
+	while (n.ping_loop == true && m->transmitted != 5)
 	{
 		ping(&n, m);
 		wait_one_sec();

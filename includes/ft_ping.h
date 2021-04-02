@@ -35,8 +35,8 @@ typedef struct  s_master
 	suseconds_t			mean;
 	suseconds_t			max;
 	suseconds_t			mdev;
+	suseconds_t			packet_loss;
 	suseconds_t			*results;
-	unsigned int		nb_results;
 	bool                verbose;
 }               t_master;
 
@@ -71,5 +71,6 @@ void 		critical_check(bool val, const char *msg);
 void		update_stats(t_networking *n, t_master *m);
 void    	calculate_mean(t_master *m);
 void   		calculate_mdev(t_master *m);
+void    	calculate_loss_percentage(t_master *m);
 
 #endif //FT_PING
