@@ -119,6 +119,7 @@ void	get_reply(t_networking *n, t_master *m)
 		puts("Message was too big for buffer. It was truncated.");
 	struct sockaddr_in *addr = (struct sockaddr_in*)(n->res->ai_addr);
 	n->time_diff = get_microsec_time_diff(&(n->time_save), &(n->second_time_save));
+	printf("microsec diff = %ld.\n", n->time_diff);
 	printf("%d bytes from %s (%s): icmp_seq=%d ttl=%d time=%ld.%ldms\n",
 	reveived_len,
 	"REPLACE_ME",
@@ -165,7 +166,7 @@ void ping_periodicaly(t_master *m)
 	print_introduction(&n);
 	ping(&n, m);
 	get_time(&(m->time));
-	while (n.ping_loop == true && m->transmitted != 3)
+	while (n.ping_loop == true && m->transmitted != 5)
 	{	
 		wait_one_sec();
 		ping(&n, m);
