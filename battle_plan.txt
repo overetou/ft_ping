@@ -3,6 +3,29 @@ On va essayer d'aller vite.
 1.0 installer une machine virtuelle debian sur le goinfre partagé.
 1: classifier les differentes fonctions donnees par le sujet
 
+Calcul de temps:
+1.56 - 0.60
+56-60 = -4
+on retient 1 seconde.
+0.94 ce n'est pas la différence mais le temps 2 moins le temps 1.
+1. on calcule la différence en secondes.
+->1
+2. on calcule la différence en millisecondes
+->-4
+3. si la diff est positive ou nulle, la diff globale = sec dif + ms diff
+ex : 2.36 - 1.22 -> 1.12 ça marche.
+4. si la diff est négative, le résultat attendu est 0.96
+1 seconde de diff.
+à plan égal: 0.56 - 0.60 = 0.04
+Si on enlève 0.04 au moins, on a 0.56 - 0.56
+on enlève 0.04 a la seconde:
+0.96 -> c'est le résultat attendu.
+5.13 - 1.21, diff:
+5 - 1 = 4
+13 - 21 = -8
+3.92
+1.21 + 3.92 = 5.13
+
 A On a le droit a une variable globale. Pourquoi ?
 B getpid nous donne l'identifiant (PID ou process id) du process actuel. Il est communement utilise pour generer des fichiers temporaires
 uniques.

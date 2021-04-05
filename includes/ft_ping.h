@@ -37,7 +37,7 @@ typedef struct  s_master
 	suseconds_t			max;
 	suseconds_t			mdev;
 	suseconds_t			packet_loss;
-	suseconds_t			*results;
+	struct timeval		*results;
 	bool                verbose;
 }               t_master;
 
@@ -48,8 +48,8 @@ typedef struct  s_networking
 	struct icmphdr	req;
 	struct addrinfo	*res;
 	struct addrinfo	hints;
-	suseconds_t		ms_save;
-	suseconds_t		second_ms;
+	struct timeval	time_save;
+	struct timeval	second_time_save;
 	char 			buffer[548];
 	struct 			sockaddr_storage src_addr;
 	struct 			iovec iov[1];
@@ -66,7 +66,8 @@ typedef struct  s_arg_processing
 bool 		ft_strcmp(char *s1, char *s2);
 void		ft_strcpy(const char *src, char *dest);
 void		ft_strncpy(const char *src, char *dest, int len);
-suseconds_t	get_ms(void);
+void		get_time(struct timeval *tv);
+long int	get_millisec_time_diff(struct timeval *before, struct timeval *after);
 void		wait_one_sec(void);
 void 		critical_check(bool val, const char *msg);
 void		update_stats(t_networking *n, t_master *m);

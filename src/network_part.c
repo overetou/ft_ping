@@ -112,21 +112,21 @@ void	setup_msg_getter(t_networking *n)
 void	get_reply(t_networking *n, t_master *m)
 {
 	int reveived_len = recvmsg(n->sd, &(n->msg), 0);
-	n->second_ms = get_ms();
+	get_time(&(n->second_time_save));
 	(m->received)++;
 	critical_check(reveived_len != -1, "Could not receive message proprely.");
 	if (n->msg.msg_flags & MSG_TRUNC)
 		puts("Message was too big for buffer. It was truncated.");
 	struct sockaddr_in *addr = (struct sockaddr_in*)(n->res->ai_addr);
-	n->second_ms -= n->ms_save;
+	n->second_time_save -= n->time_save;
 	printf("%d bytes from %s (%s): icmp_seq=%d ttl=%d time=%ld.%ldms\n",
 	reveived_len,
 	"REPLACE_ME",
 	inet_ntoa((struct in_addr)(addr->sin_addr)),
 	0,
 	0,
-	(n->second_ms) / 1000,
-	(n->second_ms - ((n->second_ms / 1000) * 1000)) / 10);
+	(n->second_time_save) / 1000,
+	(n->second_time_save - ((n->second_time_save / 1000) * 1000)) / 10);
 	update_stats(n, m);
 }
 
@@ -148,7 +148,7 @@ void	ping(t_networking *n, t_master *m)
 	critical_check(
 		sendto(n->sd, &(n->req), REQ_SIZE, 0, n->res->ai_addr, n->res->ai_addrlen) != -1,
 		"sendto() failed.");
-	n->ms_save = get_ms();
+	get_time(&(n->time_save));
 	get_reply(n, m);
 }
 
