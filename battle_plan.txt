@@ -35,7 +35,7 @@ flags
 family
 socktype
 protocole
-addrname
+addrlen
 addr
 canonname
 next

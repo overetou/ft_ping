@@ -43,6 +43,7 @@ typedef struct  s_master
 
 typedef struct  s_networking
 {
+	const char		*adr_nb;
 	bool    		ping_loop;
 	int				sd;
 	struct icmphdr	req;
