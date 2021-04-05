@@ -29,7 +29,7 @@ void print_conclusion(t_master *m)
 	printf("--- %s ping statistics ---\n"
 	    "%u packets transmitted, %u received, %ld%% packet loss, time "
 		"%ldms\nrtt min/mean/max/mdev = %ld.%ld/%ld.%ld/%ld.%ld/%ld.%ld ms\n", m->destination, m->transmitted, m->received, m->packet_loss,
-	    (m->stop_time - m->time),
+	    get_millisec_time_diff(&(m->time), &(m->stop_time)),
 		m->min / 1000, m->min - (m->min / 1000 * 1000),
 		m->mean / 1000, m->mean - (m->mean / 1000 * 1000),
 		m->max / 1000, m->max - (m->max / 1000 * 1000),

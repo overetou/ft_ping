@@ -164,7 +164,6 @@ void ping_periodicaly(t_master *m)
 	convert_text_addr_to_struct(&n, m);
 	print_introduction(&n);
 	ping(&n, m);
-	wait_one_sec();
 	get_time(&(m->time));
 	while (n.ping_loop == true && m->transmitted != 3)
 	{	

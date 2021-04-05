@@ -51,7 +51,11 @@ long int	get_microsec_time_diff(struct timeval *before, struct timeval *after)
 
 void	wait_one_sec(void)
 {
-	time_t start = get_sec();
-	
-	while (get_sec() - start < 1);
+	struct timeval start;
+	struct timeval current;
+
+	get_time(&start);
+	get_time(&current);
+	while (get_millisec_time_diff(&start, &current) < 1000)
+		get_time(&current);
 }
