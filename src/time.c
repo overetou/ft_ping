@@ -29,6 +29,26 @@ long int	get_millisec_time_diff(struct timeval *before, struct timeval *after)
 	return result;
 }
 
+long int	get_microsec_time_diff(struct timeval *before, struct timeval *after)
+{
+	time_t 		tmp_sec;
+	suseconds_t	tmp_microsec;
+	long int	result;
+
+	if (before->tv_sec == after->tv_sec)
+		return (after->tv_usec - before->tv_usec) / 1000;
+	tmp_sec = after->tv_sec - before->tv_sec;
+	tmp_microsec = after->tv_usec - before->tv_usec;
+	if (tmp_microsec < 0)
+	{
+		tmp_sec--;
+		tmp_microsec = 1000000 + tmp_microsec;
+	}
+	result = tmp_sec * 1000000;
+	result += tmp_microsec;
+	return result;
+}
+
 void	wait_one_sec(void)
 {
 	time_t start = get_sec();

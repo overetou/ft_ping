@@ -6,19 +6,19 @@ void    update_stats(t_networking *n, t_master *m)
 {
     if (m->transmitted)
     {
-        if (n->second_time_save < m->min)
-            m->min = n->second_time_save;
-        else if (n->second_time_save > m->max)
-            m->max = n->second_time_save;       
+        if (n->time_diff < m->min)
+            m->min = n->time_diff;
+        else if (n->time_diff > m->max)
+            m->max = n->time_diff;       
     }
     else
     {
-        m->min = n->second_time_save;
-        m->max = n->second_time_save;
+        m->min = n->time_diff;
+        m->max = n->time_diff;
     }
     (m->transmitted)++;
-    m->results = realloc(m->results, m->transmitted * sizeof(struct timeval));
-    ft_strncpy((char*)(m->results + (m->transmitted) - 1), (char*)(&(n->second_time_save)), sizeof(struct timeval));
+    m->results = realloc(m->results, m->transmitted * sizeof(long int));
+    m->results[(m->transmitted) - 1] = n->time_diff;
 }
 
 //TODO: Manually check that the results of mean and mdev are correct (from the real ping and ours)

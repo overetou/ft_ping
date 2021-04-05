@@ -28,16 +28,16 @@ typedef struct  s_master
 	const char          *destination;
 	unsigned int        transmitted;
 	unsigned int        received;
-	suseconds_t			time;   //In ms.
-	suseconds_t			stop_time;//In ms.
+	struct timeval		time;
+	struct timeval		stop_time;
 
 	int                 domain;
-	suseconds_t			min;
-	suseconds_t			mean;
-	suseconds_t			max;
-	suseconds_t			mdev;
+	long int			min;
+	long int			mean;
+	long int			max;
+	long int			mdev;
 	suseconds_t			packet_loss;
-	struct timeval		*results;
+	long int			*results;
 	bool                verbose;
 }               t_master;
 
@@ -50,6 +50,7 @@ typedef struct  s_networking
 	struct addrinfo	hints;
 	struct timeval	time_save;
 	struct timeval	second_time_save;
+	long int		time_diff;
 	char 			buffer[548];
 	struct 			sockaddr_storage src_addr;
 	struct 			iovec iov[1];

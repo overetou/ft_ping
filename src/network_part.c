@@ -118,15 +118,15 @@ void	get_reply(t_networking *n, t_master *m)
 	if (n->msg.msg_flags & MSG_TRUNC)
 		puts("Message was too big for buffer. It was truncated.");
 	struct sockaddr_in *addr = (struct sockaddr_in*)(n->res->ai_addr);
-	n->second_time_save -= n->time_save;
+	n->time_diff = get_microsec_time_diff(&(n->time_save), &(n->second_time_save));
 	printf("%d bytes from %s (%s): icmp_seq=%d ttl=%d time=%ld.%ldms\n",
 	reveived_len,
 	"REPLACE_ME",
 	inet_ntoa((struct in_addr)(addr->sin_addr)),
 	0,
 	0,
-	(n->second_time_save) / 1000,
-	(n->second_time_save - ((n->second_time_save / 1000) * 1000)) / 10);
+	(n->time_diff) / 1000,
+	(n->time_diff - ((n->time_diff / 1000) * 1000)) / 10);
 	update_stats(n, m);
 }
 
@@ -165,13 +165,13 @@ void ping_periodicaly(t_master *m)
 	print_introduction(&n);
 	ping(&n, m);
 	wait_one_sec();
-	m->time = get_ms();
+	get_time(&(m->time));
 	while (n.ping_loop == true && m->transmitted != 3)
 	{	
 		wait_one_sec();
 		ping(&n, m);
 	}
-	m->stop_time = get_ms();
+	get_time(&(m->stop_time));
 	freeaddrinfo(n.res);
 	close(n.sd);
 }
