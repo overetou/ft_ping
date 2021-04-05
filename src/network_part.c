@@ -163,11 +163,15 @@ void ping_periodicaly(t_master *m)
 	setup_msg_getter(&n);
 	convert_text_addr_to_struct(&n, m);
 	print_introduction(&n);
-	while (n.ping_loop == true && m->transmitted != 5)
-	{
-		ping(&n, m);
+	ping(&n, m);
+	wait_one_sec();
+	m->time = get_ms();
+	while (n.ping_loop == true && m->transmitted != 3)
+	{	
 		wait_one_sec();
+		ping(&n, m);
 	}
+	m->stop_time = get_ms();
 	freeaddrinfo(n.res);
 	close(n.sd);
 }

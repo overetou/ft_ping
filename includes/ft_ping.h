@@ -28,7 +28,8 @@ typedef struct  s_master
 	const char          *destination;
 	unsigned int        transmitted;
 	unsigned int        received;
-	suseconds_t		   time;   //In ms.
+	suseconds_t			time;   //In ms.
+	suseconds_t			stop_time;//In ms.
 
 	int                 domain;
 	suseconds_t			min;
