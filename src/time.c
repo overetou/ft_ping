@@ -56,6 +56,6 @@ void	wait_one_sec(void)
 
 	get_time(&start);
 	get_time(&current);
-	while (get_millisec_time_diff(&start, &current) < 1000)
+	while (get_millisec_time_diff(&start, &current) < 1000 && m.ping_loop == true)
 		get_time(&current);
 }
