@@ -42,5 +42,4 @@ void setup_master(t_master *m)
 	m->verbose = false;
 	m->mean = 0;
 	m->results = NULL;
-	m->transmitted = 0;
 }

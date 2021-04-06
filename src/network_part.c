@@ -114,15 +114,20 @@ void	get_reply(t_networking *n, t_master *m)
 	int reveived_len = recvmsg(n->sd, &(n->msg), 0);
 	get_time(&(n->second_time_save));
 	(m->received)++;
-	critical_check(reveived_len != -1, "Could not receive message proprely.");
+	critical_check(
+		reveived_len != -1,
+		"Could not receive message proprely.");
 	if (n->msg.msg_flags & MSG_TRUNC)
 		puts("Message was too big for buffer. It was truncated.");
-	struct sockaddr_in *addr = (struct sockaddr_in*)(n->res->ai_addr);
 	n->time_diff = get_microsec_time_diff(&(n->time_save), &(n->second_time_save));
+	
 	printf("%d bytes from %s (%s): icmp_seq=%d ttl=%d time=%ld.%ldms\n",
 	reveived_len,
 	n->res->ai_canonname,
-	inet_ntoa((struct in_addr)(addr->sin_addr)),
+	inet_ntop(AF_INET,
+	&(((struct sockaddr_in*)(n->res->ai_addr))->sin_addr),
+	n->reverse_addr,
+	INET_ADDRSTRLEN),
 	m->received,
 	0,
 	(n->time_diff) / 1000,
@@ -139,12 +144,10 @@ void	get_reply(t_networking *n, t_master *m)
 
 void	print_introduction(t_networking *n, t_master *m)
 {
-	char	reverse_addr[INET_ADDRSTRLEN];
-
 	printf("PING %s (%s) 56(84) bytes of data.\n", m->destination,
 	inet_ntop(AF_INET,
 	&(((struct sockaddr_in*)(n->res->ai_addr))->sin_addr),
-	reverse_addr,
+	n->reverse_addr,
 	INET_ADDRSTRLEN));
 }
 
