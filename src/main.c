@@ -1,23 +1,19 @@
 #include "ft_ping.h"
+#include "signal.h"
 
 void process_arguments(int argc, char **argv, t_master *m);
 
 void setup_master(t_master *m);
 
-void print_conclusion(t_master *m);
-
 void ping_periodicaly(t_master *m);
 
 int main(int argc, char **argv)
 {
-	t_master m;
-
 	process_arguments(argc, argv, &m);
 	setup_master(&m);
+	signal(SIGINT, sig_handler);
 	ping_periodicaly(&m);
 	print_conclusion(&m);
-	if (m.transmitted)
-		free(m.results);
 	return 0;
 }
 
@@ -34,10 +30,13 @@ void print_conclusion(t_master *m)
 		m->mean / 1000, m->mean - (m->mean / 1000 * 1000),
 		m->max / 1000, m->max - (m->max / 1000 * 1000),
 		m->mdev / 1000, m->mdev - (m->mdev / 1000 * 1000));
+	if (m->transmitted)
+		free(m->results);
 }
 
 void setup_master(t_master *m)
 {
+	m->ping_loop = true;
 	m->transmitted = 0;
 	m->received = 0;
 	m->verbose = false;

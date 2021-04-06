@@ -11,4 +11,4 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 include_directories(includes)
 
-add_executable(ft_ping src/main.c includes/ft_ping.h src/arguments_processing.c src/str_manip.c src/network_part.c src/time.c src/errors.c src/stats.c)
+add_executable(ft_ping src/main.c includes/ft_ping.h src/arguments_processing.c src/str_manip.c src/network_part.c src/time.c src/errors.c src/stats.c src/signal_handling.c)

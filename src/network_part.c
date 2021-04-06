@@ -93,7 +93,7 @@ void	convert_text_addr_to_struct(t_networking *n, t_master *m)
 	n->hints.ai_protocol = 0;
 	n->hints.ai_socktype = SOCK_STREAM;
 	critical_check(
-		getaddrinfo("google.com", NULL, &(n->hints), &(n->res)) == 0,
+		getaddrinfo(m->destination, NULL, &(n->hints), &(n->res)) == 0,
 		"getaddrinfo failed.");
 }
 
@@ -119,12 +119,11 @@ void	get_reply(t_networking *n, t_master *m)
 		puts("Message was too big for buffer. It was truncated.");
 	struct sockaddr_in *addr = (struct sockaddr_in*)(n->res->ai_addr);
 	n->time_diff = get_microsec_time_diff(&(n->time_save), &(n->second_time_save));
-	printf("microsec diff = %ld.\n", n->time_diff);
 	printf("%d bytes from %s (%s): icmp_seq=%d ttl=%d time=%ld.%ldms\n",
 	reveived_len,
 	n->res->ai_canonname,
 	inet_ntoa((struct in_addr)(addr->sin_addr)),
-	0,
+	m->received,
 	0,
 	(n->time_diff) / 1000,
 	(n->time_diff - ((n->time_diff / 1000) * 1000)) / 10);
@@ -138,11 +137,11 @@ void	get_reply(t_networking *n, t_master *m)
 
 //TODO : replace call to inet_itoa to homemade func.
 
-void	print_introduction(t_networking *n)
+void	print_introduction(t_networking *n, t_master *m)
 {
 	char	reverse_addr[INET_ADDRSTRLEN];
 
-	printf("PING %s (%s) 56(84) bytes of data.\n", "google.com",
+	printf("PING %s (%s) 56(84) bytes of data.\n", m->destination,
 	inet_ntop(AF_INET,
 	&(((struct sockaddr_in*)(n->res->ai_addr))->sin_addr),
 	reverse_addr,
@@ -162,19 +161,19 @@ void ping_periodicaly(t_master *m)
 {
 	t_networking n;
 
-	n.ping_loop = true;
 	open_socket(&n, m);
 	set_socket_options(&n, m);
 	create_echo_request(&n, m);
 	setup_msg_getter(&n);
 	convert_text_addr_to_struct(&n, m);
-	print_introduction(&n);
+	print_introduction(&n, m);
 	ping(&n, m);
 	get_time(&(m->time));
-	while (n.ping_loop == true && m->transmitted != 10)
+	wait_one_sec();
+	while (m->ping_loop == true)
 	{	
-		wait_one_sec();
 		ping(&n, m);
+		wait_one_sec();
 	}
 	get_time(&(m->stop_time));
 	freeaddrinfo(n.res);

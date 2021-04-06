@@ -31,6 +31,7 @@ typedef struct  s_master
 	struct timeval		time;
 	struct timeval		stop_time;
 
+	bool    			ping_loop;
 	int                 domain;
 	long int			min;
 	long int			mean;
@@ -44,7 +45,6 @@ typedef struct  s_master
 typedef struct  s_networking
 {
 	const char		*adr_nb;
-	bool    		ping_loop;
 	int				sd;
 	struct icmphdr	req;
 	struct addrinfo	*res;
@@ -65,6 +65,8 @@ typedef struct  s_arg_processing
 	int     pos;
 }               t_arg_processing;
 
+t_master m;
+
 bool 		ft_strcmp(char *s1, char *s2);
 void		ft_strcpy(const char *src, char *dest);
 void		ft_strncpy(const char *src, char *dest, int len);
@@ -77,5 +79,7 @@ void		update_stats(t_networking *n, t_master *m);
 void    	calculate_mean(t_master *m);
 void   		calculate_mdev(t_master *m);
 void    	calculate_loss_percentage(t_master *m);
+void 		print_conclusion(t_master *m);
+void	   sig_handler(int sig);
 
 #endif //FT_PING
