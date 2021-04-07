@@ -30,7 +30,7 @@ void print_conclusion(t_master *m)
 		m->mean / 1000, m->mean - (m->mean / 1000 * 1000),
 		m->max / 1000, m->max - (m->max / 1000 * 1000),
 		m->mdev / 1000, m->mdev - (m->mdev / 1000 * 1000));
-	if (m->transmitted)
+	if (m->received)
 		free(m->results);
 }
 
@@ -41,5 +41,8 @@ void setup_master(t_master *m)
 	m->received = 0;
 	m->verbose = false;
 	m->mean = 0;
+	m->mdev = 0;
+	m->min = 0;
+	m->max = 0;
 	m->results = NULL;
 }

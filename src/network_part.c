@@ -64,13 +64,20 @@ void	open_socket(t_networking *n, t_master *m)
 void	set_socket_options(t_networking *n, t_master *m)
 {
 	int				hdrincl = 0;
+	struct timeval	tv = {1, 0};//This will set the timeout of a ping to 1 second.
+
 	critical_check(
 		setsockopt(n->sd, IPPROTO_IP, IP_HDRINCL, &hdrincl, sizeof(hdrincl)) != -1,
-		"setsockopt failure."
+		"setsockopt failure on ip header inclusion."
+	);
+	critical_check(
+		setsockopt(n->sd, SOL_SOCKET, SO_RCVTIMEO, (const char*)(&tv), sizeof(struct timeval)) != 1,
+		"setsockopt failure on setting timeout value for receiving package."
 	);
 }
 
 //TODO see what htons do (and remove / replace it).
+//TODO investigate why a -1 appears on rtt line at mdev.
 
 void	create_echo_request(t_networking *n, t_master *m)
 {
@@ -120,10 +127,9 @@ void	get_reply(t_networking *n, t_master *m)
 	int reveived_len = recvmsg(n->sd, &(n->msg), 0);
 	get_time(&(n->second_time_save));
 	print_ttl(n);
+	if (reveived_len == -1)
+		return;
 	(m->received)++;
-	critical_check(
-		reveived_len != -1,
-		"Could not receive message proprely.");
 	if (n->msg.msg_flags & MSG_TRUNC)
 		puts("Message was too big for buffer. It was truncated.");
 	n->time_diff = get_microsec_time_diff(&(n->time_save), &(n->second_time_save));
@@ -160,6 +166,7 @@ void	print_introduction(t_networking *n, t_master *m)
 
 void	ping(t_networking *n, t_master *m)
 {
+    (m->transmitted)++;
 	critical_check(
 		sendto(n->sd, &(n->req), REQ_SIZE, 0, n->res->ai_addr, n->res->ai_addrlen) != -1,
 		"sendto() failed.");
