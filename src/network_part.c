@@ -109,10 +109,17 @@ void	setup_msg_getter(t_networking *n)
 	n->msg.msg_controllen = 0;
 }
 
+void	print_ttl(t_networking *n)
+{
+	struct iphdr *iph = (struct iphdr*)(n->buffer);
+	n->reply_ttl = iph->ttl;
+}
+
 void	get_reply(t_networking *n, t_master *m)
 {
 	int reveived_len = recvmsg(n->sd, &(n->msg), 0);
 	get_time(&(n->second_time_save));
+	print_ttl(n);
 	(m->received)++;
 	critical_check(
 		reveived_len != -1,
@@ -129,7 +136,7 @@ void	get_reply(t_networking *n, t_master *m)
 	n->reverse_addr,
 	INET_ADDRSTRLEN),
 	m->received,
-	0,
+	n->reply_ttl,
 	(n->time_diff) / 1000,
 	(n->time_diff - ((n->time_diff / 1000) * 1000)) / 10);
 	update_stats(n, m);

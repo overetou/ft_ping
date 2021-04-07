@@ -44,6 +44,7 @@ typedef struct  s_master
 
 typedef struct  s_networking
 {
+	uint8_t			reply_ttl;
 	char			reverse_addr[INET_ADDRSTRLEN];
 	const char		*adr_nb;
 	int				sd;
