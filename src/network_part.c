@@ -99,9 +99,11 @@ void	convert_text_addr_to_struct(t_networking *n, t_master *m)
 	n->hints.ai_next = NULL;
 	n->hints.ai_protocol = 0;
 	n->hints.ai_socktype = SOCK_STREAM;
-	critical_check(
-		getaddrinfo(m->destination, NULL, &(n->hints), &(n->res)) == 0,
-		"getaddrinfo failed.");
+	if (getaddrinfo(m->destination, NULL, &(n->hints), &(n->res)) != 0)
+	{
+		printf("ft_ping: %s: Nom ou service inconnu\n", m->destination);
+		exit(0);
+	}
 }
 
 void	setup_msg_getter(t_networking *n)
