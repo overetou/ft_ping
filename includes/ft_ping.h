@@ -30,6 +30,7 @@ typedef struct  s_master
 	unsigned int        received;
 	struct timeval		time;
 	struct timeval		stop_time;
+	struct timeval		timer_start;//that one is used to measure time between packet exchanges.
 
 	bool    			ping_loop;
 	int                 domain;

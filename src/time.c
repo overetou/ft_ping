@@ -54,8 +54,7 @@ void	wait_one_sec(void)
 	struct timeval start;
 	struct timeval current;
 
-	get_time(&start);
 	get_time(&current);
-	while (get_millisec_time_diff(&start, &current) < 1000 && m.ping_loop == true)
+	while (get_millisec_time_diff(&(m.timer_start), &current) < 1000 && m.ping_loop == true)
 		get_time(&current);
 }

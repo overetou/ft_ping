@@ -128,12 +128,15 @@ void	get_reply(t_networking *n, t_master *m)
 	get_time(&(n->second_time_save));
 	print_ttl(n);
 	if (reveived_len == -1)
+	{
+		if (m->verbose == true)
+			puts("Awaited reply timed out.");
 		return;
+	}
 	(m->received)++;
 	if (n->msg.msg_flags & MSG_TRUNC)
 		puts("Message was too big for buffer. It was truncated.");
 	n->time_diff = get_microsec_time_diff(&(n->time_save), &(n->second_time_save));
-	
 	printf("%d bytes from %s (%s): icmp_seq=%d ttl=%d time=%ld.%ldms\n",
 	reveived_len,
 	n->res->ai_canonname,
@@ -184,11 +187,13 @@ void ping_periodicaly(t_master *m)
 	setup_msg_getter(&n);
 	convert_text_addr_to_struct(&n, m);
 	print_introduction(&n, m);
+	get_time(&(m->timer_start));
 	ping(&n, m);
 	get_time(&(m->time));
 	wait_one_sec();
 	while (m->ping_loop == true)
-	{	
+	{
+		get_time(&(m->timer_start));
 		ping(&n, m);
 		wait_one_sec();
 	}

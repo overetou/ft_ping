@@ -9,8 +9,8 @@ void ping_periodicaly(t_master *m);
 
 int main(int argc, char **argv)
 {
-	process_arguments(argc, argv, &m);
 	setup_master(&m);
+	process_arguments(argc, argv, &m);
 	signal(SIGINT, sig_handler);
 	ping_periodicaly(&m);
 	print_conclusion(&m);

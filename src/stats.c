@@ -4,7 +4,7 @@
 
 void    update_stats(t_networking *n, t_master *m)
 {
-    if (m->received)
+    if (m->received != 1)
     {
         if (n->time_diff < m->min)
             m->min = n->time_diff;

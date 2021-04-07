@@ -36,10 +36,7 @@ void process_standalone_flags(t_arg_processing *ap, t_master *m)
 		while (ap->argv[ap->pos][i])
 		{
 			if (ap->argv[ap->pos][i] == 'v')
-			{
-				puts("Verbose activated.");
 				m->verbose = true;
-			}
 			else if (ap->argv[ap->pos][i] == 'h')
 				display_usage();
 			i++;
