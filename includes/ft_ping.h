@@ -17,10 +17,6 @@
 #include <netinet/ip_icmp.h>
 #include <netdb.h>
 #include <sys/time.h>
-#define PACKET_SIZE 64
-#define PORT_NO 0
-#define PING_SLEEP_RATE 1000000 x
-#define TIMEOUT_IN_SEC 1
 #define REQ_SIZE 8
 
 typedef struct  s_master
