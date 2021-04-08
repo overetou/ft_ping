@@ -85,6 +85,6 @@ void		setup_arg_processing(int argc, char **argv, t_arg_processing *ap);
 void		check_explicit_ipv_version(t_arg_processing *ap, t_master *m);
 void		display_usage();
 void		check_coherent_pos(t_arg_processing *ap);
-void		process_standalone_flags(t_arg_processing *ap, t_master *m);
+void		process_flags(t_arg_processing *ap, t_master *m);
 
 #endif //FT_PING

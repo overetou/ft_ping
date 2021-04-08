@@ -10,38 +10,47 @@ void process_arguments(int argc, char **argv, t_master *m)
 
 	setup_arg_processing(argc, argv, &ap);
 	check_explicit_ipv_version(&ap, m);
-	process_standalone_flags(&ap, m);
+	process_flags(&ap, m);
 	check_coherent_pos(&ap);
 	m->destination = argv[ap.pos];
 }
 
-bool	stouint(const char *str)
+bool	stouint(const char *str, int *to_fill)
 {
 	int i = 0;
 
 	while (str[i])
 	{
-		
+		*to_fill *= 10;
+		if (str[i] < '0' || str[i] > '9')
+			return (false);
+		*to_fill += str[i] + '0';
 	}
-	return (true);
+	printf("stouint result: %d.\n", *to_fill);
+	return (i != 0 ? true : false);
 }
 
 bool	try_c_flag(t_arg_processing *ap, t_master *m, unsigned short i)
 {
 	if (ap->argv[ap->pos][i] == 'c')
 	{
-		critical_check(m->loop_nb == -1,
-		"-c argument cannot be specified more than one time.");
-		critical_check(ap->argv[ap->pos][i + 1] == '\0',
-		"-c must be directly folowed by its value.");
-		critical_check(stouint(ap->argv[ap->pos + 1], &(m->loop_nb)) == true,
-		"Illegal value for -c.");
+		critical_check(
+			m->loop_nb == -1,
+			"-c argument cannot be specified more than one time.");
+		critical_check(
+			ap->argv[ap->pos][i + 1] == '\0',
+			"-c must be directly folowed by its value.");
+		(ap->pos)++;
+		check_coherent_pos(ap);
+		critical_check(stouint(
+			ap->argv[ap->pos + 1], &(m->loop_nb)) == true,
+			"Illegal value for -c.");
 		return (true);
 	}
 	return (false);
 }
 
-void process_standalone_flags(t_arg_processing *ap, t_master *m)
+void process_flags(t_arg_processing *ap, t_master *m)
 {
 	unsigned short i = 1;
 
@@ -81,8 +90,13 @@ void check_coherent_pos(t_arg_processing *ap)
 
 void display_usage()
 {
-	puts("Usage: ft_ping [-vh] destination\n"
-	     "Usage: ft_ping -6 [-vh] destination");
+	puts("Usage: ft_ping [-4/-6] [-vh] [-c <packet number>] destination\n"
+		"-4: use ipv4. -6: use ipv6 (non functionnal). Default: ipv4."
+		" This must be set before anything else.\n"
+		"-v: verbose upon package loss.\n"
+		"-h: display this usage\n"
+		"-c <packet number>: Stop looping after <packet number> packets have been sent.\n"
+		"Destination can be a domain name (ex: wikipedia.org) or an ip (ex: 91.198.174.192).");
 	exit(0);
 }
 
