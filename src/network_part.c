@@ -33,7 +33,7 @@ void	open_socket(t_networking *n, t_master *m)
 	n->sd = socket(m->domain, SOCK_RAW, (m->domain == AF_INET6 ? IPPROTO_ICMPV6 : IPPROTO_ICMP));
 	critical_check(
 		n->sd != -1,
-		"Unable to create a socket."
+		"Unable to create a socket. Did you launch the command as the superuser?"
 	);
 }
 
@@ -181,11 +181,13 @@ void ping_periodicaly(t_master *m)
 	ping(&n, m);
 	get_time(&(m->time));
 	wait_one_sec();
+	loop_nb++;
 	while (m->ping_loop == true && loop_nb != m->loop_nb)
 	{
 		get_time(&(m->timer_start));
 		ping(&n, m);
 		wait_one_sec();
+		loop_nb++;
 	}
 	get_time(&(m->stop_time));
 	freeaddrinfo(n.res);

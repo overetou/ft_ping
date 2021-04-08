@@ -11,23 +11,23 @@ void process_arguments(int argc, char **argv, t_master *m)
 	setup_arg_processing(argc, argv, &ap);
 	check_explicit_ipv_version(&ap, m);
 	process_flags(&ap, m);
-	check_coherent_pos(&ap);
 	m->destination = argv[ap.pos];
 }
 
 bool	stouint(const char *str, int *to_fill)
 {
 	int i = 0;
+	*to_fill = 0;
 
 	while (str[i])
 	{
 		*to_fill *= 10;
 		if (str[i] < '0' || str[i] > '9')
 			return (false);
-		*to_fill += str[i] + '0';
+		*to_fill += str[i] - '0';
+		i++;
 	}
-	printf("stouint result: %d.\n", *to_fill);
-	return (i != 0 ? true : false);
+	return (i != 0 && *to_fill > 0 ? true : false);
 }
 
 bool	try_c_flag(t_arg_processing *ap, t_master *m, unsigned short i)
@@ -43,8 +43,9 @@ bool	try_c_flag(t_arg_processing *ap, t_master *m, unsigned short i)
 		(ap->pos)++;
 		check_coherent_pos(ap);
 		critical_check(stouint(
-			ap->argv[ap->pos + 1], &(m->loop_nb)) == true,
-			"Illegal value for -c.");
+			ap->argv[ap->pos], &(m->loop_nb)) == true,
+			"Illegal value for -c. An absolute and non zero integer value was expected.");
+		(ap->pos)++;
 		return (true);
 	}
 	return (false);
@@ -54,9 +55,9 @@ void process_flags(t_arg_processing *ap, t_master *m)
 {
 	unsigned short i = 1;
 
+	check_coherent_pos(ap);
 	while (ap->argv[ap->pos][0] == '-')
 	{
-		check_coherent_pos(ap);
 		if (try_c_flag(ap, m, i) == false)
 		{
 			while (ap->argv[ap->pos][i])
@@ -68,7 +69,7 @@ void process_flags(t_arg_processing *ap, t_master *m)
 				else
 				{
 					if (ap->argv[ap->pos][i] == 'c')
-						fputs("-c must be used alone.", stderr);
+						fputs("-c must be used alone.\n", stderr);
 					else
 						fprintf(stderr, "Unknown parameter '-%c'.\n", ap->argv[ap->pos][i]);
 					exit(0);
@@ -79,6 +80,7 @@ void process_flags(t_arg_processing *ap, t_master *m)
 				display_usage();
 			(ap->pos)++;
 		}
+		check_coherent_pos(ap);
 	}
 }
 
