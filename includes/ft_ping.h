@@ -41,6 +41,7 @@ typedef struct  s_master
 	suseconds_t			packet_loss;
 	long int			*results;
 	bool                verbose;
+	int					loop_nb;
 }               t_master;
 
 typedef struct  s_networking
@@ -83,6 +84,11 @@ void    	calculate_mean(t_master *m);
 void   		calculate_mdev(t_master *m);
 void    	calculate_loss_percentage(t_master *m);
 void 		print_conclusion(t_master *m);
-void	   sig_handler(int sig);
+void		sig_handler(int sig);
+void		setup_arg_processing(int argc, char **argv, t_arg_processing *ap);
+void		check_explicit_ipv_version(t_arg_processing *ap, t_master *m);
+void		display_usage();
+void		check_coherent_pos(t_arg_processing *ap);
+void		process_standalone_flags(t_arg_processing *ap, t_master *m);
 
 #endif //FT_PING

@@ -45,4 +45,5 @@ void setup_master(t_master *m)
 	m->min = 0;
 	m->max = 0;
 	m->results = NULL;
+	m->loop_nb = -1;
 }

@@ -23,30 +23,6 @@ unsigned short checksum(void *b, int len)
 	return result;
 }
 
-uint16_t	ip_checksum(void *vdata, size_t len)
-{
-	char	*casted = (char*)vdata;
-	uint32_t	accumulator = 0xffff;
-	uint16_t	word;
-
-	for (size_t i = 0; i + 1 < len; i += 2)
-	{
-		ft_strncpy(casted + i, (char*)(&word), 2);
-		accumulator += ntohs(word);
-		if (accumulator > 0xffff)
-			accumulator -= 0xffff;
-	}
-	if (len & 1)
-	{
-		word = 0;
-		ft_strncpy(casted + len - 1, (char*)(&word), 1);
-		accumulator += ntohs(word);
-		if (accumulator > 0xffff)
-			accumulator -= 0xffff;
-	}
-	return htons(~accumulator);
-}
-
 void	set_sock_addr_in(struct sockaddr_in *a_in)
 {
 	a_in->sin_family = m.domain;
@@ -54,7 +30,7 @@ void	set_sock_addr_in(struct sockaddr_in *a_in)
 
 void	open_socket(t_networking *n, t_master *m)
 {
-	n->sd = socket(m->domain, SOCK_RAW, IPPROTO_ICMP);
+	n->sd = socket(m->domain, SOCK_RAW, (m->domain == AF_INET6 ? IPPROTO_ICMPV6 : IPPROTO_ICMP));
 	critical_check(
 		n->sd != -1,
 		"Unable to create a socket."
@@ -66,10 +42,20 @@ void	set_socket_options(t_networking *n, t_master *m)
 	int				hdrincl = 0;
 	struct timeval	tv = {1, 0};//This will set the timeout of a ping to 1 second.
 
-	critical_check(
-		setsockopt(n->sd, IPPROTO_IP, IP_HDRINCL, &hdrincl, sizeof(hdrincl)) != -1,
-		"setsockopt failure on ip header inclusion."
-	);
+	if (m->domain == AF_INET)
+	{
+		critical_check(
+			setsockopt(n->sd, IPPROTO_IP, IP_HDRINCL, &hdrincl, sizeof(hdrincl)) != -1,
+			"setsockopt failure on ip header inclusion."
+		);
+	}
+	else
+	{
+		critical_check(
+			setsockopt(n->sd, IPPROTO_IPV6, IPV6_HDRINCL, &hdrincl, sizeof(hdrincl)) != -1,
+			"setsockopt failure on ipv6 header inclusion."
+		);
+	}
 	critical_check(
 		setsockopt(n->sd, SOL_SOCKET, SO_RCVTIMEO, (const char*)(&tv), sizeof(struct timeval)) != 1,
 		"setsockopt failure on setting timeout value for receiving package."
@@ -118,7 +104,8 @@ void	setup_msg_getter(t_networking *n)
 	n->msg.msg_controllen = 0;
 }
 
-void	print_ttl(t_networking *n)
+//Are we reading at the good spot in IPV6 mode?
+void	get_ttl(t_networking *n)
 {
 	struct iphdr *iph = (struct iphdr*)(n->buffer);
 	n->reply_ttl = iph->ttl;
@@ -128,7 +115,7 @@ void	get_reply(t_networking *n, t_master *m)
 {
 	int received_len = recvmsg(n->sd, &(n->msg), 0);
 	get_time(&(n->second_time_save));
-	print_ttl(n);
+	get_ttl(n);
 	if (received_len == -1)
 	{
 		if (m->verbose == true)
