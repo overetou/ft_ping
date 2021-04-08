@@ -91,11 +91,11 @@ void check_coherent_pos(t_arg_processing *ap)
 void display_usage()
 {
 	puts("Usage: ft_ping [-4/-6] [-vh] [-c <packet number>] destination\n"
-		"-4: use ipv4. -6: use ipv6 (non functionnal). Default: ipv4."
+		"\t-4: use ipv4. -6: use ipv6 (non functionnal). Default: ipv4."
 		" This must be set before anything else.\n"
-		"-v: verbose upon package loss.\n"
-		"-h: display this usage\n"
-		"-c <packet number>: Stop looping after <packet number> packets have been sent.\n"
+		"\t-v: verbose upon package loss.\n"
+		"\t-h: display this usage\n"
+		"\t-c <packet number>: Stop looping after <packet number> packets have been sent.\n"
 		"Destination can be a domain name (ex: wikipedia.org) or an ip (ex: 91.198.174.192).");
 	exit(0);
 }

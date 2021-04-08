@@ -169,6 +169,7 @@ void	ping(t_networking *n, t_master *m)
 void ping_periodicaly(t_master *m)
 {
 	t_networking n;
+	int loop_nb = 0;
 
 	open_socket(&n, m);
 	set_socket_options(&n, m);
@@ -180,7 +181,7 @@ void ping_periodicaly(t_master *m)
 	ping(&n, m);
 	get_time(&(m->time));
 	wait_one_sec();
-	while (m->ping_loop == true)
+	while (m->ping_loop == true && loop_nb != m->loop_nb)
 	{
 		get_time(&(m->timer_start));
 		ping(&n, m);
