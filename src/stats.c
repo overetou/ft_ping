@@ -25,7 +25,7 @@ void    update_stats(t_networking *n, t_master *m)
 void    calculate_loss_percentage(t_master *m)
 {
     if (m->received)
-        m->packet_loss = 100 - (100 / ((m->transmitted) / (m->received)));
+        m->packet_loss = 100 - (10000 / ((m->transmitted) * 100 / (m->received)));
     else
         m->packet_loss = 100;
 }

@@ -49,7 +49,7 @@ uint16_t	ip_checksum(void *vdata, size_t len)
 
 void	set_sock_addr_in(struct sockaddr_in *a_in)
 {
-	a_in->sin_family = AF_INET;
+	a_in->sin_family = m.domain;
 }
 
 void	open_socket(t_networking *n, t_master *m)
@@ -86,7 +86,7 @@ void	create_echo_request(t_networking *n, t_master *m)
 	n->req.checksum = 0;
 	n->req.un.echo.id = htons(rand());
 	n->req.un.echo.sequence = htons(1);
-	n->req.checksum = ip_checksum(&(n->req), REQ_SIZE);
+	n->req.checksum = checksum(&(n->req), REQ_SIZE);
 }
 
 void	convert_text_addr_to_struct(t_networking *n, t_master *m)
@@ -126,10 +126,10 @@ void	print_ttl(t_networking *n)
 
 void	get_reply(t_networking *n, t_master *m)
 {
-	int reveived_len = recvmsg(n->sd, &(n->msg), 0);
+	int received_len = recvmsg(n->sd, &(n->msg), 0);
 	get_time(&(n->second_time_save));
 	print_ttl(n);
-	if (reveived_len == -1)
+	if (received_len == -1)
 	{
 		if (m->verbose == true)
 			puts("Awaited reply timed out.");
@@ -140,9 +140,9 @@ void	get_reply(t_networking *n, t_master *m)
 		puts("Message was too big for buffer. It was truncated.");
 	n->time_diff = get_microsec_time_diff(&(n->time_save), &(n->second_time_save));
 	printf("%d bytes from %s (%s): icmp_seq=%d ttl=%d time=%ld.%ldms\n",
-	reveived_len,
+	received_len != 0 ? received_len - 20 : received_len,
 	n->res->ai_canonname,
-	inet_ntop(AF_INET,
+	inet_ntop(m->domain,
 	&(((struct sockaddr_in*)(n->res->ai_addr))->sin_addr),
 	n->reverse_addr,
 	INET_ADDRSTRLEN),
@@ -162,8 +162,8 @@ void	get_reply(t_networking *n, t_master *m)
 
 void	print_introduction(t_networking *n, t_master *m)
 {
-	printf("PING %s (%s) 56(84) bytes of data.\n", m->destination,
-	inet_ntop(AF_INET,
+	printf("PING %s (%s) 0(28) bytes of data.\n", m->destination,
+	inet_ntop(m->domain,
 	&(((struct sockaddr_in*)(n->res->ai_addr))->sin_addr),
 	n->reverse_addr,
 	INET_ADDRSTRLEN));
