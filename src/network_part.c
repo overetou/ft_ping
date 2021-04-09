@@ -75,14 +75,21 @@ void	charcpyn(char *dest, const char *src)
 
 void	create_echo_request(t_networking *n, t_master *m)
 {
+	struct timeval tv;
+	struct timezone tz;
+	
+	critical_check(
+		gettimeofday(&tv, &tz) == 0,
+		"Failed to get time of day.");
 	n->req = (struct icmphdr*)(n->req_buffer);
 	n->req->type = ICMP_ECHO;
 	n->req->code = 0;
 	n->req->checksum = 0;
 	n->req->un.echo.id = getuid();
 	n->req->un.echo.sequence = 1;
-	charcpyn((n->req_buffer) + REQ_SIZE, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuv");
-	n->req->checksum = checksum(n->req, REQ_SIZE + DATA_SIZE);
+	*((time_t*)((n->req_buffer) + REQ_SIZE)) = tv.tv_sec;
+	charcpyn((n->req_buffer) + REQ_SIZE + TIME_STAMP_SIZE, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuv");
+	n->req->checksum = checksum(n->req, REQ_SIZE + TIME_STAMP_SIZE + DATA_SIZE);
 }
 
 void	convert_text_addr_to_struct(t_networking *n, t_master *m)
@@ -152,7 +159,7 @@ void	get_reply(t_networking *n, t_master *m)
 
 void	print_introduction(t_networking *n, t_master *m)
 {
-	printf("PING %s (%s) 0(28) bytes of data.\n", m->destination,
+	printf("PING %s (%s) 56(84) bytes of data.\n", m->destination,
 	inet_ntop(m->domain,
 	&(((struct sockaddr_in*)(n->res->ai_addr))->sin_addr),
 	n->reverse_addr,
@@ -163,7 +170,7 @@ void	ping(t_networking *n, t_master *m)
 {
     (m->transmitted)++;
 	critical_check(
-		sendto(n->sd, n->req, REQ_SIZE + DATA_SIZE,
+		sendto(n->sd, n->req, REQ_SIZE + TIME_STAMP_SIZE + DATA_SIZE,
 		0, n->res->ai_addr, n->res->ai_addrlen) != -1,
 		"sendto() failed.");
 	get_time(&(n->time_save));

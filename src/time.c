@@ -5,7 +5,7 @@ void	get_time(struct timeval *tv)
 	struct timezone	tz;
 
 	critical_check(
-		gettimeofday(tv, &tz) != -1,
+		gettimeofday(tv, &tz) == 0,
 		"Could not get time of day in seconds.");
 }
 

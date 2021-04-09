@@ -19,6 +19,7 @@
 #include <sys/time.h>
 #define REQ_SIZE 8
 #define DATA_SIZE 48
+#define TIME_STAMP_SIZE 8
 
 typedef struct  s_master
 {
@@ -48,7 +49,7 @@ typedef struct  s_networking
 	const char		*adr_nb;
 	int				sd;
 	struct icmphdr	*req;
-	char			req_buffer[REQ_SIZE + DATA_SIZE];
+	char			req_buffer[REQ_SIZE + DATA_SIZE + TIME_STAMP_SIZE];
 	struct addrinfo	*res;
 	struct addrinfo	hints;
 	struct timeval	time_save;
