@@ -62,16 +62,13 @@ void	set_socket_options(t_networking *n, t_master *m)
 	);
 }
 
-//TODO see what htons do (and remove / replace it).
-//TODO investigate why a -1 appears on rtt line at mdev.
-
 void	create_echo_request(t_networking *n, t_master *m)
 {
 	n->req.type = 8;
 	n->req.code = 0;
 	n->req.checksum = 0;
-	n->req.un.echo.id = htons(rand());
-	n->req.un.echo.sequence = htons(1);
+	n->req.un.echo.id = getuid();
+	n->req.un.echo.sequence = 1;
 	n->req.checksum = checksum(&(n->req), REQ_SIZE);
 }
 
@@ -139,13 +136,6 @@ void	get_reply(t_networking *n, t_master *m)
 	(n->time_diff - ((n->time_diff / 1000) * 1000)) / 10);
 	update_stats(n, m);
 }
-
-//TODO: change the size if need be for ipv6. l17
-//TODO: if the protocol is ipv6, change the Type of the message. l19
-// accordingly(https://en.wikipedia.org/wiki/Ping_(networking_utility)#ICMP_packet)
-//TODO: Change AF_INET to AFINET6 when using ipv6. l29
-
-//TODO : replace call to inet_itoa to homemade func.
 
 void	print_introduction(t_networking *n, t_master *m)
 {

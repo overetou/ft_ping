@@ -86,5 +86,6 @@ void		check_explicit_ipv_version(t_arg_processing *ap, t_master *m);
 void		display_usage();
 void		check_coherent_pos(t_arg_processing *ap);
 void		process_flags(t_arg_processing *ap, t_master *m);
+void		*secure_realloc(void *old_adr, size_t len);
 
 #endif //FT_PING

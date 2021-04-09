@@ -1,7 +1,5 @@
 #include "ft_ping.h"
 
-//TODO: secure the realloc in update_stats
-
 void    update_stats(t_networking *n, t_master *m)
 {
     if (m->received != 1)
@@ -16,11 +14,9 @@ void    update_stats(t_networking *n, t_master *m)
         m->min = n->time_diff;
         m->max = n->time_diff;
     }
-    m->results = realloc(m->results, m->received * sizeof(long int));
+    m->results = secure_realloc(m->results, m->received * sizeof(long int));
     m->results[(m->received) - 1] = n->time_diff;
 }
-
-//TODO: Manually check that the results of mean and mdev are correct (from the real ping and ours)
 
 void    calculate_loss_percentage(t_master *m)
 {
