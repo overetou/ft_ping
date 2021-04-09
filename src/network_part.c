@@ -185,14 +185,15 @@ void ping_periodicaly(t_master *m)
 	get_time(&(m->timer_start));
 	ping(&n, m, &loop_nb);
 	get_time(&(m->time));
+	get_time(&(m->stop_time));
 	wait_one_sec(loop_nb);
 	while (m->ping_loop == true && loop_nb != m->loop_nb)
 	{
 		get_time(&(m->timer_start));
 		ping(&n, m, &loop_nb);
+		get_time(&(m->stop_time));
 		wait_one_sec(loop_nb);
 	}
-	get_time(&(m->stop_time));
 	freeaddrinfo(n.res);
 	close(n.sd);
 }
