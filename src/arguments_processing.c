@@ -86,8 +86,8 @@ void process_flags(t_arg_processing *ap, t_master *m)
 
 void check_coherent_pos(t_arg_processing *ap)
 {
-	if (ap->pos == ap->argc)
-		display_usage();
+	critical_check(ap->pos != ap->argc,
+	"Incomplete statement detected. Use ft_ping -h to display usage.");
 }
 
 void display_usage()
