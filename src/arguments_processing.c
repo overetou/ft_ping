@@ -97,7 +97,8 @@ void display_usage()
 		"\t-v: verbose upon package loss.\n"
 		"\t-h: display this usage\n"
 		"\t-c <packet number>: Stop looping after <packet number> packets have been sent.\n"
-		"Destination can be a domain name (ex: wikipedia.org) or an ip (ex: 91.198.174.192).");
+		"Destination can be a domain name (ex: wikipedia.org) or an ip (ex: 91.198.174.192).\n"
+		"Arguments beyond the destination will not be be processed.");
 	exit(0);
 }
 
