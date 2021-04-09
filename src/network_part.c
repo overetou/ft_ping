@@ -62,14 +62,27 @@ void	set_socket_options(t_networking *n, t_master *m)
 	);
 }
 
+void	charcpyn(char *dest, const char *src)
+{
+	int i = 0;
+
+	while (src[i])
+	{
+		dest[i] = src[i];
+		i++;
+	}
+}
+
 void	create_echo_request(t_networking *n, t_master *m)
 {
-	n->req.type = 8;
-	n->req.code = 0;
-	n->req.checksum = 0;
-	n->req.un.echo.id = getuid();
-	n->req.un.echo.sequence = 1;
-	n->req.checksum = checksum(&(n->req), REQ_SIZE);
+	n->req = (struct icmphdr*)(n->req_buffer);
+	n->req->type = ICMP_ECHO;
+	n->req->code = 0;
+	n->req->checksum = 0;
+	n->req->un.echo.id = getuid();
+	n->req->un.echo.sequence = 1;
+	charcpyn((n->req_buffer) + REQ_SIZE, "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuv");
+	n->req->checksum = checksum(n->req, REQ_SIZE + DATA_SIZE);
 }
 
 void	convert_text_addr_to_struct(t_networking *n, t_master *m)
@@ -150,7 +163,8 @@ void	ping(t_networking *n, t_master *m)
 {
     (m->transmitted)++;
 	critical_check(
-		sendto(n->sd, &(n->req), REQ_SIZE, 0, n->res->ai_addr, n->res->ai_addrlen) != -1,
+		sendto(n->sd, n->req, REQ_SIZE + DATA_SIZE,
+		0, n->res->ai_addr, n->res->ai_addrlen) != -1,
 		"sendto() failed.");
 	get_time(&(n->time_save));
 	get_reply(n, m);
