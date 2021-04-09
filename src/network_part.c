@@ -73,7 +73,7 @@ void	charcpyn(char *dest, const char *src)
 	}
 }
 
-void	create_echo_request(t_networking *n, t_master *m)
+void	create_echo_request(t_networking *n)
 {	
 	n->req = (struct icmphdr*)(n->req_buffer);
 	n->req->type = ICMP_ECHO;
@@ -178,7 +178,7 @@ void ping_periodicaly(t_master *m)
 
 	open_socket(&n, m);
 	set_socket_options(&n, m);
-	create_echo_request(&n, m);
+	create_echo_request(&n);
 	setup_msg_getter(&n);
 	convert_text_addr_to_struct(&n, m);
 	print_introduction(&n, m);

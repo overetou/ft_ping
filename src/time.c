@@ -61,7 +61,6 @@ long int	get_microsec_time_diff(struct timeval *before, struct timeval *after)
 
 void	wait_one_sec(int loop_nb)
 {
-	struct timeval start;
 	struct timeval current;
 
 	if (loop_nb == m.loop_nb)
