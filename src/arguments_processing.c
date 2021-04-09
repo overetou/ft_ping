@@ -53,11 +53,12 @@ bool	try_c_flag(t_arg_processing *ap, t_master *m, unsigned short i)
 
 void process_flags(t_arg_processing *ap, t_master *m)
 {
-	unsigned short i = 1;
+	unsigned short i;
 
 	check_coherent_pos(ap);
 	while (ap->argv[ap->pos][0] == '-')
 	{
+		i = 1;
 		if (try_c_flag(ap, m, i) == false)
 		{
 			while (ap->argv[ap->pos][i])
@@ -76,8 +77,6 @@ void process_flags(t_arg_processing *ap, t_master *m)
 				}
 				i++;
 			}
-			if (i == 1)
-				display_usage();
 			(ap->pos)++;
 		}
 		check_coherent_pos(ap);
