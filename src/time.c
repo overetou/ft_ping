@@ -9,6 +9,16 @@ void	get_time(struct timeval *tv)
 		"Could not get time of day in seconds.");
 }
 
+void	update_request_time_stamp(t_networking *n)
+{
+	struct timeval tv;
+
+	get_time(&tv);
+	*((time_t*)((n->req_buffer) + REQ_SIZE)) = tv.tv_sec;
+	n->req->checksum = 0;
+	n->req->checksum = checksum(n->req, REQ_SIZE + TIME_STAMP_SIZE + DATA_SIZE);
+}
+
 long int	get_millisec_time_diff(struct timeval *before, struct timeval *after)
 {
 	time_t 		tmp_sec;
