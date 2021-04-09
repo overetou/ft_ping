@@ -158,7 +158,7 @@ void	print_introduction(t_networking *n, t_master *m)
 	INET_ADDRSTRLEN));
 }
 
-void	ping(t_networking *n, t_master *m)
+void	ping(t_networking *n, t_master *m, int *loop_nb)
 {
     (m->transmitted)++;
 	update_request_time_stamp(n);
@@ -168,6 +168,7 @@ void	ping(t_networking *n, t_master *m)
 		"sendto() failed.");
 	get_time(&(n->time_save));
 	get_reply(n, m);
+	(*loop_nb)++;
 }
 
 void ping_periodicaly(t_master *m)
@@ -182,16 +183,14 @@ void ping_periodicaly(t_master *m)
 	convert_text_addr_to_struct(&n, m);
 	print_introduction(&n, m);
 	get_time(&(m->timer_start));
-	ping(&n, m);
+	ping(&n, m, &loop_nb);
 	get_time(&(m->time));
-	wait_one_sec();
-	loop_nb++;
+	wait_one_sec(loop_nb);
 	while (m->ping_loop == true && loop_nb != m->loop_nb)
 	{
 		get_time(&(m->timer_start));
-		ping(&n, m);
-		wait_one_sec();
-		loop_nb++;
+		ping(&n, m, &loop_nb);
+		wait_one_sec(loop_nb);
 	}
 	get_time(&(m->stop_time));
 	freeaddrinfo(n.res);

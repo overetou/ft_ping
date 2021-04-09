@@ -76,7 +76,7 @@ void			ft_strncpy(const char *src, char *dest, int len);
 void			get_time(struct timeval *tv);
 long int		get_millisec_time_diff(struct timeval *before, struct timeval *after);
 long int		get_microsec_time_diff(struct timeval *before, struct timeval *after);
-void			wait_one_sec(void);
+void			wait_one_sec(int loop_nb);
 void			critical_check(bool val, const char *msg);
 void			update_stats(t_networking *n, t_master *m);
 void			calculate_mean(t_master *m);

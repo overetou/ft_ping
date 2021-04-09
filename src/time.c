@@ -59,11 +59,13 @@ long int	get_microsec_time_diff(struct timeval *before, struct timeval *after)
 	return result;
 }
 
-void	wait_one_sec(void)
+void	wait_one_sec(int loop_nb)
 {
 	struct timeval start;
 	struct timeval current;
 
+	if (loop_nb == m.loop_nb)
+		return;
 	get_time(&current);
 	while (get_millisec_time_diff(&(m.timer_start), &current) < 1000 && m.ping_loop == true)
 		get_time(&current);
