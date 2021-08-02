@@ -7,6 +7,8 @@ void setup_master(t_master *m);
 
 void ping_periodicaly(t_master *m);
 
+t_master	m;
+
 int main(int argc, char **argv)
 {
 	setup_master(&m);

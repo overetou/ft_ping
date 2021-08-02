@@ -68,7 +68,7 @@ typedef struct	s_arg_processing
 	int			pos;
 }				t_arg_processing;
 
-t_master m;
+extern t_master m;
 
 bool			ft_strcmp(char *s1, char *s2);
 void			ft_strcpy(const char *src, char *dest);
